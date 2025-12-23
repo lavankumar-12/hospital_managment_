@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-item.active {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            border-right: 3px solid #8b5cf6;
+        }
+
+        /* Custom Scrollbar for the main content area */
+        main::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        main::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        main::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        main::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col z-20 shadow-2xl">
+        <div class="p-6 border-b border-gray-700 flex items-center gap-3">
+            <span class="bg-purple-600 p-2 rounded-lg text-xl shadow-lg shadow-purple-600/20">💊</span>
+            <h1 class="font-bold text-lg tracking-wide text-gray-100">PharmaDash</h1>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2 mt-2">
+            <button onclick="switchTab('add-medicine')" id="nav-add-medicine"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400 active">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span class="font-medium">Add Medicine</span>
+            </button>
+            <button onclick="switchTab('medicines')" id="nav-medicines"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+                <span class="font-medium">Medicines</span>
+            </button>
+            <button onclick="switchTab('orders')" id="nav-orders"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                    </path>
+                </svg>
+                <span class="font-medium">Incoming Orders</span>
+            </button>
+            <button onclick="switchTab('history')" id="nav-history"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="font-medium">Order History</span>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-700 bg-gray-800">
+            <button onclick="logout()"
+                class="w-full flex items-center gap-2 text-red-400 hover:text-red-300 px-4 py-2 transition hover:bg-red-500/10 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span class="font-medium">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-8 relative bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
+
+        <!-- Add Medicine View -->
+        <div id="addMedicineView" class="max-w-6xl mx-auto animate-fade-in">
+            <header
+                class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Add Medicine</h2>
+                    <p class="text-gray-400 text-sm">Add new medicines to the inventory.</p>
+                </div>
+            </header>
+
+            <!-- Add Medicine Form -->
+            <div
+                class="bg-gray-800 rounded-3xl p-8 shadow-2xl mb-8 border border-gray-700/50 overflow-hidden relative group">
+                <div
+                    class="absolute top-0 right-0 w-64 h-64 bg-purple-600/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
+                </div>
+
+                <h3 class="text-xl font-bold mb-6 text-purple-300 flex items-center gap-2 relative z-10">
+                    <div class="p-2 bg-purple-500/10 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                    </div>
+                    Add New Medicine
+                </h3>
+
+                <form id="addMedForm" onsubmit="addMedicine(event)"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                    <div class="space-y-1">
+                        <label
+                            class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">Medicine
+                            Name</label>
+                        <input type="text" name="name" required placeholder="e.g. Paracetamol 500mg"
+                            class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-100 placeholder-gray-600">
+                    </div>
+                    <div class="space-y-1">
+                        <label
+                            class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">Department</label>
+                        <div class="relative">
+                            <select id="deptSelect" name="department_id" required
+                                class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-100 appearance-none cursor-pointer">
+                                <option value="">Loading Deaprtments...</option>
+                            </select>
+                            <div
+                                class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label
+                            class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">Price
+                            per Unit (₹)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3 text-gray-500">₹</span>
+                            <input type="number" step="0.01" name="price" required placeholder="0.00"
+                                class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl pl-8 pr-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-100">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label
+                            class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">Initial
+                            Stock</label>
+                        <input type="number" name="stock_quantity" required placeholder="100"
+                            class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-100">
+                    </div>
+                    <div class="col-span-1 md:col-span-2 space-y-1">
+                        <label
+                            class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">Description</label>
+                        <textarea name="description" placeholder="Brief description of the medicine..." rows="2"
+                            class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-100 placeholder-gray-600 resize-none"></textarea>
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2 pt-2">
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-purple-900/40 transform active:scale-99 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Add to Inventory
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Medicines View (List) -->
+        <div id="medicinesView" class="max-w-6xl mx-auto animate-fade-in hidden">
+            <header
+                class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Medicines</h2>
+                    <p class="text-gray-400 text-sm">View and manage all medicines.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <select id="filterDeptSelect" onchange="loadInventory()"
+                            class="bg-gray-700/50 border border-white/10 rounded-xl px-6 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none cursor-pointer text-base min-w-[250px]">
+                            <option value="">All Departments</option>
+                        </select>
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <button onclick="loadInventory()"
+                        class="p-2 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition text-gray-300 hover:text-white border border-white/10"
+                        title="Refresh Inventory">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Inventory List -->
+            <div class="bg-gray-800 rounded-3xl overflow-hidden shadow-xl border border-gray-700/50">
+                <div
+                    class="p-6 bg-gray-800/80 border-b border-gray-700 flex justify-between items-center backdrop-blur-md">
+                    <h3 class="font-bold text-gray-200 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                            </path>
+                        </svg>
+                        Current Stock List
+                    </h3>
+                    <div class="text-xs text-gray-500">Showing all items</div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider font-semibold">
+                                <th class="py-4 px-6 border-b border-gray-700/50">Details</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Category</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Price</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Stock Level</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable" class="text-sm text-gray-300 divide-y divide-gray-700/50">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders View -->
+        <div id="ordersView" class="max-w-6xl mx-auto animate-fade-in hidden">
+            <header
+                class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Incoming Orders</h2>
+                    <p class="text-gray-400 text-sm">Review today's incoming orders.</p>
+                </div>
+                <button onclick="loadOrders()"
+                    class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl transition shadow-lg shadow-blue-900/30 font-bold text-sm tracking-wide transform active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                        </path>
+                    </svg>
+                    Refresh Orders
+                </button>
+            </header>
+
+            <div class="bg-gray-800 rounded-3xl overflow-hidden shadow-xl border border-gray-700/50">
+                <div class="p-6 bg-gray-800/80 border-b border-gray-700 flex items-center gap-3 backdrop-blur-md">
+                    <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                    <h3 class="font-bold text-gray-200">Today's Orders</h3>
+                </div>
+                <div class="overflow-x-auto min-h-[400px]">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider font-semibold">
+                                <th class="py-4 px-6 border-b border-gray-700/50">Order ID</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Patient</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50 w-1/3">Items Checklist</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Total Amount</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Method</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Date</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable" class="text-sm text-gray-300 divide-y divide-gray-700/50">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- History View -->
+        <div id="historyView" class="max-w-6xl mx-auto animate-fade-in hidden">
+            <header
+                class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Order History</h2>
+                    <p class="text-gray-400 text-sm">View past orders by date.</p>
+                </div>
+            </header>
+
+            <div class="bg-gray-800 rounded-3xl overflow-hidden shadow-xl border border-gray-700/50 p-6 min-h-[600px]">
+                <div class="flex items-center gap-4 mb-6">
+                    <label class="text-gray-400 font-medium">Select Date:</label>
+                    <input type="date" id="historyDateInput" onchange="loadHistoryOrders()"
+                        class="bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-purple-500 [color-scheme:dark]">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider font-semibold">
+                                <th class="py-4 px-6 border-b border-gray-700/50">Order ID</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Patient</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50 w-1/3">Items Checklist</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Total Amount</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Method</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Date</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable" class="text-sm text-gray-300 divide-y divide-gray-700/50">
+                            <!-- Loaded via JS -->
+                            <tr>
+                                <td colspan="7" class="py-12 text-center text-gray-500">Select a date to view orders.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Edit Modal -->
+    <div id="editModal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="bg-gray-800 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl p-6 transform transition-all scale-100 relative">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            <h2 class="text-xl font-bold mb-6 text-purple-300 border-b border-gray-700 pb-4">Update Stock/Price</h2>
+            <form onsubmit="saveEdit(event)" class="space-y-6">
+                <input type="hidden" id="editId">
+                <div class="space-y-1">
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1 ml-1">New Price (₹)</label>
+                    <input type="number" step="0.01" id="editPrice" required
+                        class="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none text-white transition">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs uppercase text-gray-500 font-bold mb-1 ml-1">New Stock Quantity</label>
+                    <input type="number" id="editStock" required
+                        class="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none text-white transition">
+                </div>
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeEditModal()"
+                        class="px-5 py-2.5 text-gray-400 hover:text-white transition font-medium hover:bg-white/5 rounded-lg">Cancel</button>
+                    <button type="submit"
+                        class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-purple-500/30 transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/api.js?v=1.3"></script>
+    <script>
+        checkAuth('pharmacist');
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../login.html';
+        }
+
+        function switchTab(tab) {
+            // Update Nav
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${tab}`).classList.add('active');
+
+            // Update Views
+            // Update Views
+            document.getElementById('addMedicineView').classList.add('hidden');
+            document.getElementById('medicinesView').classList.add('hidden');
+            document.getElementById('ordersView').classList.add('hidden');
+            document.getElementById('historyView').classList.add('hidden');
+
+            if (tab === 'add-medicine') {
+                document.getElementById('addMedicineView').classList.remove('hidden');
+            } else if (tab === 'medicines') {
+                document.getElementById('medicinesView').classList.remove('hidden');
+                loadInventory();
+            } else if (tab === 'orders') {
+                document.getElementById('ordersView').classList.remove('hidden');
+                loadOrders(); // Loads Today by default
+            } else if (tab === 'history') {
+                document.getElementById('historyView').classList.remove('hidden');
+            }
+        }
+
+        async function init() {
+            // Load Depts
+            try {
+                const depts = await api.get('/patient/departments');
+
+                // Add Medicine Form Select
+                const sel = document.getElementById('deptSelect');
+                if (sel) sel.innerHTML = '<option value="">Select Department</option>' + depts.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+
+                // Filter Select in Medicines View
+                const filterSel = document.getElementById('filterDeptSelect');
+                if (filterSel) filterSel.innerHTML = '<option value="">All Departments</option>' + depts.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+
+            } catch (e) { console.error('Failed to load depts', e); }
+
+            loadInventory();
+        }
+
+        async function addMedicine(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                name: form.name.value,
+                department_id: form.department_id.value,
+                price: parseFloat(form.price.value),
+                stock_quantity: parseInt(form.stock_quantity.value),
+                description: form.description.value
+            };
+
+            try {
+                const res = await api.post('/pharmacy/medicines/add', data);
+                if (res.message) {
+                    // Success visual feedback
+                    const btn = form.querySelector('button[type="submit"]');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span class="text-green-300 flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Added!</span>';
+                    setTimeout(() => btn.innerHTML = originalText, 2000);
+
+                    form.reset();
+                    loadInventory();
+                } else alert(res.error);
+            } catch (err) { alert(err.message); }
+        }
+
+        function openEditModal(id, currentPrice, currentStock) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editPrice').value = currentPrice;
+            document.getElementById('editStock').value = currentStock;
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        async function saveEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const price = parseFloat(document.getElementById('editPrice').value);
+            const stock = parseInt(document.getElementById('editStock').value);
+
+            try {
+                const res = await api.post('/pharmacy/medicines/update', {
+                    medicine_id: id,
+                    price: price,
+                    stock_quantity: stock
+                });
+                if (res.message) {
+                    closeEditModal();
+                    loadInventory();
+                } else alert(res.error);
+            } catch (err) { alert(err.message); }
+        }
+
+        async function loadInventory() {
+            try {
+                const deptId = document.getElementById('filterDeptSelect') ? document.getElementById('filterDeptSelect').value : '';
+                const url = deptId ? `/pharmacy/medicines?department_id=${deptId}` : '/pharmacy/medicines';
+
+                const meds = await api.get(url);
+                const tbody = document.getElementById('inventoryTable');
+                if (!tbody) return;
+
+                if (meds.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-gray-500">No medicines found. Use the form above to add some.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = meds.map(m => `
+                    <tr class="hover:bg-gray-800/50 transition group border-b border-gray-700/50 last:border-0">
+                        <td class="py-4 px-6">
+                            <div class="font-bold text-gray-200 group-hover:text-purple-300 transition text-base">${m.name}</div>
+                            <div class="text-xs text-gray-500">${m.description || 'No description'}</div>
+                        </td>
+                        <td class="py-4 px-6 text-gray-400 text-sm">Dept #${m.department_id}</td>
+                        <td class="py-4 px-6 text-emerald-400 font-mono font-bold">₹${m.price}</td>
+                        <td class="py-4 px-6">
+                            <div class="flex items-center gap-2">
+                                <span class="${m.stock_quantity < 20 ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'} px-2.5 py-1 rounded-md text-xs font-bold">
+                                    ${m.stock_quantity}
+                                </span>
+                                ${m.stock_quantity < 10 ? '<span class="text-red-500 text-xs animate-pulse font-bold">Low!</span>' : ''}
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-right">
+                            <button onclick="openEditModal(${m.id}, ${m.price}, ${m.stock_quantity})" 
+                                class="text-gray-400 hover:text-white bg-gray-700/50 hover:bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold transition shadow hover:shadow-lg">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadOrders() {
+            // Default to Today
+            const today = new Date().toISOString().split('T')[0];
+            await fetchOrders(today, 'ordersTable');
+        }
+
+        async function loadHistoryOrders() {
+            const date = document.getElementById('historyDateInput').value;
+            if (!date) return;
+            await fetchOrders(date, 'historyTable');
+        }
+
+        async function fetchOrders(date, tableId) {
+            try {
+                const url = date ? `/pharmacy/all-orders?date=${date}` : '/pharmacy/all-orders';
+                const orders = await api.get(url);
+                const tbody = document.getElementById(tableId);
+                if (!tbody) return;
+
+                if (orders.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="py-20 text-center text-gray-500">No orders found for ${date || 'this date'}.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = orders.map(o => `
+                    <tr class="hover:bg-gray-800/10 transition border-b border-gray-700/50 last:border-0">
+                        <td class="py-4 px-6 text-purple-400 font-bold font-mono">#${o.id}</td>
+                        <td class="py-4 px-6">
+                             <div class="text-white font-medium flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-[10px] font-bold">P</div>
+                                Patient
+                            </div>
+                            <div class="text-xs text-gray-500 ml-8">${o.patient_email}</div>
+                        </td>
+                        <td class="py-4 px-6">
+                             <div class="bg-gray-900/50 p-2 rounded-lg border border-gray-700/50 text-gray-300 text-sm max-w-xs truncate" title="${o.items_summary}">
+                                ${o.items_summary}
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 font-bold text-white text-lg">₹${o.total_amount}</td>
+                        <td class="py-4 px-6">
+                            <span class="${o.payment_method === 'online' ? 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'} px-3 py-1.5 rounded-lg text-xs uppercase font-extrabold tracking-wider flex items-center w-fit gap-2">
+                                ${o.payment_method || 'cash'}
+                            </span>
+                        </td>
+                        <td class="py-4 px-6 text-gray-500 text-xs font-mono">${new Date(o.created_at).toLocaleDateString()} ${new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                        <td class="py-4 px-6 text-right">
+                            <span class="bg-green-500/10 text-green-400 px-3 py-1.5 rounded-full text-xs font-bold uppercase ring-1 ring-green-500/30 inline-block">
+                                ${o.status || 'Completed'}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
