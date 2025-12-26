@@ -59,7 +59,7 @@ def book_appointment():
         cursor.execute("SELECT schedule_start, schedule_end FROM doctors WHERE id=%s", (doctor_id,))
         doc_sched = cursor.fetchone()
         
-        if doc_sched:
+        if doc_sched and not is_emergency:
             s_start = (datetime.datetime.min + doc_sched['schedule_start']).time()
             s_end = (datetime.datetime.min + doc_sched['schedule_end']).time()
             if not (s_start <= time_part <= s_end):
