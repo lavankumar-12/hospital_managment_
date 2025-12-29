@@ -1,0 +1,10 @@
+flask
+flask-cors
+mysql-connector-python
+pymysql
+pyjwt
+bcrypt
+reportlab
+requests
+python-dotenv
+gunicorn

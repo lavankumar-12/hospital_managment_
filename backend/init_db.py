@@ -1,8 +1,8 @@
 import pymysql
 import bcrypt
 import logging
-
-# ... (existing imports)
+import os
+from config import Config
 
 def seed_pharmacist(cursor):
     cursor.execute("SELECT * FROM users WHERE email = 'pharmacist@hospital.com'")
@@ -15,9 +15,9 @@ def seed_pharmacist(cursor):
 
 def get_db_connection():
     return pymysql.connect(
-        host="localhost",
-        user="root",
-        password="9885",
+        host=Config.DB_HOST,
+        user=Config.DB_USER,
+        password=Config.DB_PASSWORD,
         autocommit=True,
         cursorclass=pymysql.cursors.DictCursor
     )
@@ -27,7 +27,9 @@ def init_db():
     cursor = conn.cursor()
     
     # Read schema
-    with open('database/schema.sql', 'r') as f:
+    basedir = os.path.dirname(os.path.abspath(__file__))
+    schema_path = os.path.join(basedir, 'database', 'schema.sql')
+    with open(schema_path, 'r') as f:
         schema = f.read()
     
     # Execute schema commands
@@ -46,10 +48,10 @@ def init_db():
     # Reconnect to the specific database to seed data
     conn.close()
     conn = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="9885",
-        database="hospital_db",
+        host=Config.DB_HOST,
+        user=Config.DB_USER,
+        password=Config.DB_PASSWORD,
+        database=Config.DB_NAME,
         autocommit=True,
         cursorclass=pymysql.cursors.DictCursor
     )

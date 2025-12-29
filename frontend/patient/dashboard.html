@@ -293,7 +293,7 @@
         </div>
     </div>
 
-    <script src="../js/api.js?v=1.5"></script>
+    <script src="../js/api.js?v=1.6"></script>
     <script>
         checkAuth('patient');
         let profile = null;
@@ -497,7 +497,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </button>
                             ${a.status !== 'cancelled' ? `
-                            <a href="http://127.0.0.1:5001/api/patient/prescription/download/${a.id}" target="_blank" class="text-green-300 hover:text-green-200" title="Download PDF">
+                            <a href="/api/patient/prescription/download/${a.id}" target="_blank" class="text-green-300 hover:text-green-200" title="Download PDF">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             </a>` : ''}
                         </div>

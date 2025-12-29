@@ -23,7 +23,9 @@ class CustomJSONProvider(DefaultJSONProvider):
             return float(obj)
         return super().default(obj)
 
-app = Flask(__name__)
+from flask import Flask, send_from_directory
+
+app = Flask(__name__, static_folder='../frontend', static_url_path='')
 app.json = CustomJSONProvider(app)
 app.config.from_object(Config)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
@@ -36,8 +38,7 @@ app.register_blueprint(pharmacy_bp, url_prefix='/api/pharmacy')
 
 @app.route('/')
 def home():
-    return "Hospital Management System API is running! Access the frontend via frontend/index.html"
-
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
