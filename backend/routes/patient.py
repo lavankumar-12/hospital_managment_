@@ -100,9 +100,11 @@ def book_appointment():
         p_res = cursor.fetchone()
         if p_res:
             msg = f"Thank you for booking appointment on {date} at {time} for your health issue. Please arrive at the hospital at least 30 minutes before the appointment time."
-            send_sms(p_res['phone'], msg)
+            sms_sent = send_sms(p_res['phone'], msg)
+        else:
+            sms_sent = False
             
-        return jsonify({"message": "Appointment booked successfully", "token": token, "appointment_id": appt_id}), 201
+        return jsonify({"message": "Appointment booked successfully", "token": token, "appointment_id": appt_id, "sms_sent": sms_sent}), 201
     
     except Exception as e:
         return jsonify({"message": str(e)}), 500

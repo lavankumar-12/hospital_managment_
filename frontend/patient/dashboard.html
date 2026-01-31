@@ -483,7 +483,13 @@
                 });
 
                 if (res.token) {
-                    showPopup('Booking Successful', `Your appointment is confirmed.\n\nYour Token Number: ${res.token}`, 'success');
+                    let msg = "";
+                    if (res.sms_sent) {
+                        msg = "The message has successfully sent";
+                    } else {
+                        msg = "Error SMS is not sended";
+                    }
+                    showPopup('Booking Successful', `${msg}\n\nYour Token Number: ${res.token}`, res.sms_sent ? 'success' : 'warning');
                     loadHistory();
                     document.getElementById('dateInput').value = '';
                     document.getElementById('timeInput').value = '';
