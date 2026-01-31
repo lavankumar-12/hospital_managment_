@@ -64,8 +64,10 @@ def book_appointment():
         doc_sched = cursor.fetchone()
         
         if doc_sched and not is_emergency:
-            s_start = (datetime.datetime.min + doc_sched['schedule_start']).time()
-            s_end = (datetime.datetime.min + doc_sched['schedule_end']).time()
+            s_start = doc_sched['schedule_start']
+            s_end = doc_sched['schedule_end']
+            # If for some reason checking type is needed in future, can add here.
+            # But psycopg2 returns datetime.time for TIME columns.
             if not (s_start <= time_part <= s_end):
                 return jsonify({"message": f"Doctor available only between {s_start} and {s_end}"}), 400
 
