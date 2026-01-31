@@ -1,0 +1,1 @@
+appointments,cart_items,daily_queues,departments,doctor_leaves,doctors,medicines,notifications,order_items,orders,patients,prescriptions,users

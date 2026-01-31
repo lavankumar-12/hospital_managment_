@@ -34,8 +34,8 @@ def register():
         
         # Create User
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        cursor.execute("INSERT INTO users (email, password_hash, role) VALUES (%s, %s, %s)", (email, hashed, role))
-        user_id = cursor.lastrowid
+        cursor.execute("INSERT INTO users (email, password_hash, role) VALUES (%s, %s, %s) RETURNING id", (email, hashed, role))
+        user_id = cursor.fetchone()['id']
         
         # Create Patient Profile
         cursor.execute("INSERT INTO patients (user_id, full_name, age, gender, phone) VALUES (%s, %s, %s, %s, %s)", 
@@ -102,17 +102,37 @@ def login():
 def change_password():
     data = request.json
     user_id = data.get('user_id')
-    new_password = data.get('password')
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
     
-    if not user_id or not new_password:
+    if not user_id or not current_password or not new_password:
         return jsonify({"message": "Missing fields"}), 400
         
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
+        # Get current hash
+        cursor.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+            
+        stored_hash = user['password_hash']
+        if isinstance(stored_hash, str):
+            hash_bytes = stored_hash.encode('utf-8')
+        else:
+            hash_bytes = stored_hash
+
+        # Verify current password
+        if not bcrypt.checkpw(current_password.encode('utf-8'), hash_bytes):
+            return jsonify({"message": "Current password incorrect"}), 401
+            
+        # Update to new password
         new_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         cursor.execute("UPDATE users SET password_hash=%s WHERE id=%s", (new_hash, user_id))
+        conn.commit()
         return jsonify({"message": "Password updated successfully"}), 200
     except Exception as e:
          return jsonify({"message": str(e)}), 500

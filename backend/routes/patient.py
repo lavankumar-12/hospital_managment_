@@ -77,8 +77,9 @@ def book_appointment():
             return jsonify({"message": "Slot already booked"}), 409
 
         # Generate Token
+        # Generate Token
         # Check/Update Daily Queue
-        cursor.execute("INSERT INTO daily_queues (doctor_id, queue_date, current_token) VALUES (%s, %s, 0) ON DUPLICATE KEY UPDATE id=id", (doctor_id, date))
+        cursor.execute("INSERT INTO daily_queues (doctor_id, queue_date, current_token) VALUES (%s, %s, 0) ON CONFLICT (doctor_id, queue_date) DO NOTHING", (doctor_id, date))
         
         # Get max token for this day
         cursor.execute("SELECT MAX(token_number) as max_tok FROM appointments WHERE doctor_id=%s AND appointment_date=%s", (doctor_id, date))
@@ -87,9 +88,9 @@ def book_appointment():
         
         # Insert Appointment
         atype = 'emergency' if is_emergency else 'normal'
-        cursor.execute("INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, token_number, type) VALUES (%s, %s, %s, %s, %s, %s)",
+        cursor.execute("INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, token_number, type) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
                        (patient_id, doctor_id, date, time, token, atype))
-        appt_id = cursor.lastrowid
+        appt_id = cursor.fetchone()['id']
         
         # Send SMS
         # Fetch details for SMS
@@ -251,3 +252,63 @@ def analyze_report():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@patient_bp.route('/notifications', methods=['GET'])
+def get_notifications():
+    patient_id = request.args.get('patient_id')
+    if not patient_id:
+        return jsonify([])
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        # 1. Auto-generate reminders for upcoming appointments (within 10 mins)
+        now = datetime.datetime.now()
+        ten_mins_later = now + datetime.timedelta(minutes=10)
+        today = now.date()
+        
+        cursor.execute("""
+            SELECT a.id, a.appointment_time, d.full_name as doctor_name
+            FROM appointments a
+            JOIN doctors d ON a.doctor_id = d.id
+            WHERE a.patient_id = %s 
+            AND a.appointment_date = %s 
+            AND a.status = 'pending'
+            AND a.appointment_time <= %s
+            AND a.appointment_time >= %s
+        """, (patient_id, today, ten_mins_later.time(), now.time()))
+        
+        upcoming = cursor.fetchall()
+        
+        for appt in upcoming:
+            # Check if reminder already exists for THIS specific appointment
+            cursor.execute("SELECT id FROM notifications WHERE patient_id=%s AND appointment_id=%s AND type='APPOINTMENT_REMINDER'", (patient_id, appt['id']))
+            if not cursor.fetchone():
+                msg = f"Your appointment has only 10 min so you ready for the consulation of the doctor {appt['doctor_name']}"
+                cursor.execute("""
+                    INSERT INTO notifications (patient_id, message, type, appointment_id)
+                    VALUES (%s, %s, 'APPOINTMENT_REMINDER', %s)
+                """, (patient_id, msg, appt['id']))
+        
+        # 2. Fetch unread notifications
+        cursor.execute("SELECT * FROM notifications WHERE patient_id = %s AND is_read = FALSE ORDER BY created_at DESC", (patient_id,))
+        notifications = cursor.fetchall()
+        
+        return jsonify(notifications)
+    except Exception as e:
+        print(f"Error in notifications: {e}")
+        return jsonify([])
+    finally:
+        conn.close()
+
+@patient_bp.route('/notifications/mark-read', methods=['POST'])
+def mark_notification_read():
+    data = request.json
+    notif_id = data.get('notification_id')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE notifications SET is_read = TRUE WHERE id = %s", (notif_id,))
+    conn.close()
+    return jsonify({"message": "Notification marked as read"})
+

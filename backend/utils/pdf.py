@@ -11,12 +11,12 @@ def generate_prescription_pdf(doctor_name, department, patient_name, age, gender
 
     # Header
     c.setFont("Helvetica-Bold", 24)
-    c.drawCentredString(width / 2, height - 50, "CITY HOSPITAL")
+    c.drawCentredString(width / 2, height - 50, "SUNRISE HOSPITAL")
     
     c.setFont("Helvetica", 12)
-    c.drawCentredString(width / 2, height - 70, "123 Health Avenue, Wellness City")
-    c.drawCentredString(width / 2, height - 85, "Phone: +1 234 567 890")
-
+    c.drawCentredString(width / 2, height - 70, "Gandimaisamma, Dundigal , Hyderabad")
+    c.drawCentredString(width / 2, height - 85, "Phone: +91 8946489496")
+    
     c.setLineWidth(1)
     c.line(50, height - 100, width - 50, height - 100)
 

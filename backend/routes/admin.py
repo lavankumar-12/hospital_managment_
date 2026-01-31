@@ -115,8 +115,8 @@ def add_doctor():
         # Create User
         import bcrypt
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        cursor.execute("INSERT INTO users (email, password_hash, role) VALUES (%s, %s, 'doctor')", (email, hashed))
-        user_id = cursor.lastrowid
+        cursor.execute("INSERT INTO users (email, password_hash, role) VALUES (%s, %s, 'doctor') RETURNING id", (email, hashed))
+        user_id = cursor.fetchone()['id']
         
         # Create Profile
         cursor.execute("""

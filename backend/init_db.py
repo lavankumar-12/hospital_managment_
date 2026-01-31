@@ -27,7 +27,7 @@ def init_db():
     cursor = conn.cursor()
     
     # Read schema
-    basedir = os.path.dirname(os.path.abspath(__file__))
+    basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     schema_path = os.path.join(basedir, 'database', 'schema.sql')
     with open(schema_path, 'r') as f:
         schema = f.read()
