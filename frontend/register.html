@@ -95,16 +95,40 @@
             try {
                 const res = await api.post('/auth/register', data);
                 if (res.message === "Registration successful") {
-                    alert('Registration Successful! Please login.');
-                    window.location.href = 'login.html?role=patient';
+                    showToast('Registration Successful! Redirecting to login...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html?role=patient';
+                    }, 2000);
                 } else {
-                    alert('Error: ' + res.message);
+                    showToast('Error: ' + res.message, 'error');
                 }
             } catch (err) {
-                alert('Error: ' + err.message);
+                showToast('Error: ' + err.message, 'error');
             }
         }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 bg-gray-800 border border-gray-700 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 min-w-[300px] border-l-4 ${type === 'success' ? 'border-l-blue-500' : 'border-l-red-500'}`;
+
+            const icon = type === 'success' ? '✅' : '❌';
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span class="text-white font-medium">${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
     </script>
+    <div id="toastContainer" class="fixed bottom-8 right-8 z-50 space-y-4"></div>
 </body>
 
 </html>

@@ -72,6 +72,15 @@
                 </svg>
                 <span class="font-medium">Patients</span>
             </button>
+            <button onclick="switchTab('security')" id="nav-security"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                    </path>
+                </svg>
+                <span class="font-medium">Security</span>
+            </button>
         </nav>
 
         <div class="p-4 border-t border-gray-700 bg-gray-800">
@@ -327,7 +336,61 @@
             </div>
         </div>
 
+        <!-- Security Section -->
+        <div id="securitySection" class="hidden animate-fade-in max-w-2xl mx-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-white mb-1">Security Settings</h2>
+                <p class="text-gray-400">Update your account password.</p>
+            </header>
+
+            <div class="bg-gray-800/60 border border-gray-700/50 backdrop-blur-md rounded-2xl p-8 shadow-xl space-y-6">
+                <div class="space-y-1">
+                    <label class="text-xs uppercase text-gray-500 font-semibold ml-1">Current Password</label>
+                    <input type="password" id="currentAdminPass" placeholder="••••••••"
+                        class="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-gray-600 transition">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs uppercase text-gray-500 font-semibold ml-1">New Password</label>
+                    <input type="password" id="newAdminPass" placeholder="••••••••"
+                        class="w-full bg-gray-900/50 border border-gray-600 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-gray-600 transition">
+                </div>
+                <div class="pt-4">
+                    <button onclick="changeAdminPassword()"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/30 transition transform active:scale-95">
+                        Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <!-- Generic Dashboard Popup Modal (Replaces alert/confirm) -->
+    <div id="dashboardPopup"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4 text-center">
+        <div class="bg-gray-900 border border-white/20 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0 duration-300"
+            id="popupContent">
+            <div class="p-8">
+                <div id="popupIcon" class="mb-6 inline-block p-4 rounded-full bg-white/5">
+                    <!-- Icon -->
+                </div>
+                <h3 id="popupTitle" class="text-xl font-bold text-white mb-2">Notice</h3>
+                <p id="popupMessage" class="text-gray-400 leading-relaxed mb-8">Message goes here.</p>
+                <div class="flex gap-4" id="popupActions">
+                    <button id="popupConfirm"
+                        class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-900/40">
+                        Okay
+                    </button>
+                    <button id="popupCancel"
+                        class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition hidden">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-8 right-8 z-[250] space-y-4"></div>
 
     <script src="../js/api.js?v=1.3"></script>
     <script>
@@ -339,6 +402,8 @@
         }
 
         async function init() {
+            const res = await api.get('/auth/me');
+            window.adminUser = res.user;
             loadStats();
             setInterval(loadStats, 5000);
             loadDeptsForForm();
@@ -350,7 +415,7 @@
             document.getElementById(`nav-${tab}`).classList.add('active');
 
             // Hide all Sections
-            ['statsSection', 'doctorsSection', 'patientsSection', 'appointmentsSection'].forEach(id => {
+            ['statsSection', 'doctorsSection', 'patientsSection', 'appointmentsSection', 'securitySection'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
 
@@ -477,40 +542,134 @@
             };
 
             if (!data.full_name || !data.email || !data.password || !data.department_id) {
-                return alert('Please fill all required fields');
+                return showToast('Please fill all required fields', 'warning');
             }
 
             try {
                 const res = await api.post('/admin/add-doctor', data);
                 if (res.message === 'Doctor added successfully') {
-                    alert('Doctor added successfully!');
+                    showToast('Doctor added successfully!', 'success');
                     loadDoctorsList();
                     // Clear inputs
                     ['newDocName', 'newDocEmail', 'newDocPass', 'newDocPhone', 'newDocExp'].forEach(id => document.getElementById(id).value = '');
                     document.getElementById('newDocDept').value = '';
                 } else {
-                    alert('Error: ' + res.message);
+                    showToast('Error: ' + res.message, 'error');
                 }
             } catch (e) {
-                alert('Error: ' + e.message);
+                showToast('Error: ' + e.message, 'error');
             }
         }
 
         async function deleteUser(userId, role) {
-            if (!confirm(`Are you sure you want to delete this ${role}? This action cannot be undone.`)) return;
+            const confirmed = await showPopup('Confirm Deletion', `Are you sure you want to delete this ${role}? This action cannot be undone.`, 'error', true);
+            if (!confirmed) return;
 
             try {
                 const res = await api.del(`/admin/users/${userId}`);
                 if (res.message === 'User deleted successfully') {
+                    showToast('User deleted successfully', 'success');
                     if (role === 'doctor') loadDoctorsList();
                     if (role === 'patient') loadPatientsList();
                     loadStats(); // Update stats as well
                 } else {
-                    alert(res.message || 'Failed to delete user');
+                    showToast(res.message || 'Failed to delete user', 'error');
                 }
             } catch (e) {
-                alert('Error: ' + e.message);
+                showToast('Error: ' + e.message, 'error');
             }
+        }
+
+        async function changeAdminPassword() {
+            const currentPass = document.getElementById('currentAdminPass').value;
+            const newPass = document.getElementById('newAdminPass').value;
+            if (!currentPass || !newPass) return showToast('Please fill both fields', 'warning');
+
+            try {
+                const res = await api.post('/auth/change-password', {
+                    user_id: window.adminUser.id,
+                    current_password: currentPass,
+                    new_password: newPass
+                });
+                if (res.message === 'Password updated successfully') {
+                    showToast('Password updated successfully!', 'success');
+                    document.getElementById('currentAdminPass').value = '';
+                    document.getElementById('newAdminPass').value = '';
+                } else {
+                    showToast(res.message || 'Failed to update password', 'error');
+                }
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
+        }
+
+        // Dashboard UI Helpers (Replaces Alerts)
+        function showPopup(title, message, type = 'info', isConfirm = false) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('dashboardPopup');
+                const content = document.getElementById('popupContent');
+                const titleEl = document.getElementById('popupTitle');
+                const msgEl = document.getElementById('popupMessage');
+                const iconEl = document.getElementById('popupIcon');
+                const btnConfirm = document.getElementById('popupConfirm');
+                const btnCancel = document.getElementById('popupCancel');
+
+                titleEl.innerText = title;
+                msgEl.innerText = message;
+
+                // Set Icon and Colors based on type
+                let iconHtml = '';
+                if (type === 'success') {
+                    iconHtml = '<svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'error') {
+                    iconHtml = '<svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else {
+                    iconHtml = '<svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                }
+                iconEl.innerHTML = iconHtml;
+
+                btnCancel.classList.toggle('hidden', !isConfirm);
+                btnConfirm.innerText = isConfirm ? 'Confirm' : 'Got it';
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+
+                const cleanup = (val) => {
+                    content.classList.remove('scale-100', 'opacity-100');
+                    content.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve(val);
+                    }, 300);
+                };
+
+                btnConfirm.onclick = () => cleanup(true);
+                btnCancel.onclick = () => cleanup(false);
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 bg-gray-900/90 backdrop-blur-md border border-white/10 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px] border-l-4 ${type === 'success' ? 'border-l-blue-500' : type === 'error' ? 'border-l-red-500' : 'border-l-yellow-500'}`;
+
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span class="text-white font-medium">${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         }
 
         init();

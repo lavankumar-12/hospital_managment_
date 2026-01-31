@@ -155,75 +155,30 @@
                 </div>
 
                 <!-- Report Analyzer Card -->
-                <div
-                    class="bg-gradient-to-br from-indigo-600/20 to-purple-900/40 backdrop-blur-md rounded-3xl p-6 border border-indigo-500/30 shadow-2xl relative overflow-hidden">
-                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-white">
-                        <span class="bg-indigo-500 p-1.5 rounded-lg shadow-lg shadow-indigo-500/40">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </span>
-                        Report Analyzer AI
-                    </h2>
-                    <p class="text-xs text-indigo-200 mb-4 bg-indigo-900/30 p-2 rounded border border-indigo-500/20">
-                        Upload your medical report and get AI-powered analysis in your preferred language.
-                    </p>
-
-                    <div class="space-y-4">
-                        <div class="relative">
-                            <input type="file" id="reportFile" accept=".jpg,.jpeg,.png,.pdf" class="hidden"
-                                onchange="updateFileName()">
-                            <label for="reportFile"
-                                class="w-full flex items-center justify-center gap-2 bg-black/40 border border-indigo-400/30 rounded-xl px-4 py-3 text-white cursor-pointer hover:bg-black/50 transition">
-                                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                                </svg>
-                                <span id="fileNameDisplay">Choose Report (Image/PDF)</span>
-                            </label>
-                        </div>
-
-                        <div class="relative">
-                            <select id="reportLang"
-                                class="w-full bg-black/40 border border-indigo-400/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none backdrop-blur-sm transition hover:bg-black/50">
-                                <option class="bg-gray-800" value="English">English</option>
-                                <option class="bg-gray-800" value="Hindi">Hindi</option>
-                                <option class="bg-gray-800" value="Telugu">Telugu</option>
-                                <option class="bg-gray-800" value="Tamil">Tamil</option>
-                                <option class="bg-gray-800" value="Kannada">Kannada</option>
-                                <option class="bg-gray-800" value="Malayalam">Malayalam</option>
-                                <option class="bg-gray-800" value="Bengali">Bengali</option>
-                            </select>
-                            <div
-                                class="pointer-events-none absolute inset-y-0 right-0 top-0 flex items-center px-4 text-indigo-400">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <button onclick="analyzeReport()" id="analyzeBtn"
-                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-500 hover:to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-500/40 transform transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
-                            Analyze Now
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </button>
+                <div onclick="window.location.href='analyze-report.html'"
+                    class="cursor-pointer group relative bg-gradient-to-br from-indigo-600/20 to-purple-900/40 backdrop-blur-md rounded-3xl p-6 border border-indigo-500/30 shadow-2xl overflow-hidden hover:bg-indigo-600/30 transition duration-300">
+                    <div
+                        class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/20 rounded-full blur-2xl group-hover:bg-indigo-400/30 transition">
                     </div>
 
-                    <!-- Result Area -->
-                    <div id="analysisResult" class="mt-4 hidden animate-fade-in">
-                        <div
-                            class="p-4 bg-black/40 rounded-2xl border border-white/10 text-sm text-indigo-100 max-h-48 overflow-y-auto">
-                            <h3 class="font-bold text-white mb-2 underline">Analysis:</h3>
-                            <div id="analysisText"></div>
-                        </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <span class="bg-indigo-500 p-1.5 rounded-lg shadow-lg shadow-indigo-500/40">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                            </span>
+                            Report Analyzer AI
+                        </h2>
+                        <svg class="w-5 h-5 text-indigo-300 group-hover:translate-x-1 transition" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
                     </div>
+                    <p class="text-sm text-indigo-100/80 mb-0">Get AI-powered analysis of your medical reports.</p>
                 </div>
 
             </div>
@@ -232,6 +187,22 @@
             <div class="col-span-1 lg:col-span-2 space-y-6">
 
                 <!-- Booking Card (Moved Here) -->
+                <div id="pauseBanner"
+                    class="hidden bg-orange-600/20 border border-orange-500/50 rounded-2xl p-4 mb-6 animate-pulse flex items-center gap-4">
+                    <div class="bg-orange-500 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-orange-200">Consultations Paused</h4>
+                        <p id="pauseReasonDisplay" class="text-sm text-orange-300/80">The doctor is currently attending
+                            to an emergency.</p>
+                    </div>
+                </div>
+
                 <div
                     class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-2xl">
                     <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-white">
@@ -354,6 +325,8 @@
                 <div>
                     <h3 class="text-lg font-bold text-blue-300 mb-4">Change Password</h3>
                     <div class="space-y-3">
+                        <input type="password" id="currentPassword" placeholder="Current Password"
+                            class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <input type="password" id="newPassword" placeholder="New Password"
                             class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <button onclick="changePassword()"
@@ -364,6 +337,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Generic Dashboard Popup Modal (Replaces alert/confirm) -->
+    <div id="dashboardPopup"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-white/20 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0 duration-300"
+            id="popupContent">
+            <div class="p-8 text-center">
+                <div id="popupIcon" class="mb-6 inline-block p-4 rounded-full bg-white/5">
+                    <!-- Icon -->
+                </div>
+                <h3 id="popupTitle" class="text-xl font-bold text-white mb-2">Notice</h3>
+                <p id="popupMessage" class="text-gray-400 leading-relaxed mb-8">Message goes here.</p>
+                <div class="flex gap-4" id="popupActions">
+                    <button id="popupConfirm"
+                        class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-900/40">
+                        Okay
+                    </button>
+                    <button id="popupCancel"
+                        class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition hidden">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-8 right-8 z-[250] space-y-4"></div>
 
     <script src="../js/api.js?v=1.6"></script>
     <script>
@@ -417,6 +418,7 @@
             if (emSel) emSel.innerHTML = deptOptions;
 
             loadHistory();
+            checkNotifications(); // Run immediately
         }
 
         function getDoctorTitle(deptName) {
@@ -457,7 +459,7 @@
             try {
                 const res = await api.get(`/patient/check-availability?doctor_id=${docId}&date=${date}`);
                 if (!res.available) {
-                    alert('⚠️ Attention: ' + res.message);
+                    showPopup('Doctor Availability', res.message, 'warning');
                     document.getElementById('dateInput').value = ''; // Clear invalid date
                 }
             } catch (e) { console.error(e); }
@@ -469,7 +471,7 @@
             const time = document.getElementById('timeInput').value;
             // Removed isEm check from regular form
 
-            if (!docId || !date || !time) return alert('Please fill all fields');
+            if (!docId || !date || !time) return showToast('Please fill all fields', 'warning');
 
             try {
                 const res = await api.post('/patient/book', {
@@ -481,30 +483,29 @@
                 });
 
                 if (res.token) {
-                    alert(`Booked Successfully!\n\nYour Token Number: ${res.token}`);
+                    showPopup('Booking Successful', `Your appointment is confirmed.\n\nYour Token Number: ${res.token}`, 'success');
                     loadHistory();
                     document.getElementById('dateInput').value = '';
                     document.getElementById('timeInput').value = '';
                 } else {
-                    alert(res.message);
+                    showToast(res.message, 'error');
                 }
             } catch (e) {
-                alert(e.message);
+                showToast(e.message, 'error');
             }
         }
 
         async function bookEmergency() {
             const deptId = document.getElementById('emDeptSelect').value;
-            if (!deptId) return alert('Please select a department first!');
+            if (!deptId) return showToast('Please select a department first!', 'warning');
 
-            if (!confirm('Please Confirm:\n\nThis is an EMERGENCY booking.\n- It will be booked for NOW.\n- It will be marked as high priority.\n\nProceed?')) return;
+            const confirmed = await showPopup('Confirm Emergency', 'This is an EMERGENCY booking.\n- It will be booked for NOW.\n- It will be marked as high priority.\n\nProceed?', 'emergency', true);
+            if (!confirmed) return;
 
             // We need to pick a doctor from that department.
-            // Ideally backend handles "next available", but for now let's pick the first one or ask user to pick
-            // Let's implement a quick fetch to get any doctor in that dept
             try {
                 const docs = await api.get(`/patient/doctors?department_id=${deptId}`);
-                if (!docs || docs.length === 0) return alert('No doctors found in this department!');
+                if (!docs || docs.length === 0) return showPopup('No Doctors', 'No doctors found in this department!', 'error');
 
                 // Pick the first one automatically for emergency speed
                 const docId = docs[0].id;
@@ -522,14 +523,14 @@
                 });
 
                 if (res.token) {
-                    alert(`🚨 EMERGENCY BOOKED 🚨\n\nPriority Token: ${res.token}\nDoctor: Dr. ${docs[0].full_name}\n\nGo immediately to the department.`);
+                    showPopup('🚨 EMERGENCY BOOKED 🚨', `Priority Token: ${res.token}\nDoctor: Dr. ${docs[0].full_name}\n\nGo immediately to the department.`, 'emergency');
                     loadHistory();
                 } else {
-                    alert(res.message);
+                    showToast(res.message, 'error');
                 }
 
             } catch (e) {
-                alert('Error booking emergency: ' + e.message);
+                showToast('Error booking emergency: ' + e.message, 'error');
             }
         }
 
@@ -546,8 +547,8 @@
             tbody.innerHTML = res.map(a => `
                 <tr class="hover:bg-white/5 transition group">
                     <td class="px-8 py-4 whitespace-nowrap">
-                        <div class="text-sm font-bold text-white">${a.appointment_date}</div>
-                        <div class="text-xs text-purple-200">${a.appointment_time}</div>
+                        <div class="text-sm font-bold text-white">${new Date(a.appointment_date).toDateString()}</div>
+                        <div class="text-xs text-purple-200">${a.appointment_time.substring(0, 5)}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-white">Dr. ${a.doctor_name}</div>
@@ -559,9 +560,13 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                         <span class="px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(a.status)} border border-white/10 shadow-sm">
-                            ${a.status}
-                        </span>
+                         <div class="flex flex-col items-center gap-1">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(a.status)} border border-white/10 shadow-sm">
+                                ${a.status}
+                            </span>
+                            ${a.status === 'rescheduled' && a.reschedule_note ?
+                    `<p class="text-[10px] text-blue-300 italic max-w-[150px] truncate" title="${a.reschedule_note}">Note: ${a.reschedule_note}</p>` : ''}
+                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div class="flex items-center justify-end gap-3 opacity-80 group-hover:opacity-100 transition">
@@ -580,6 +585,9 @@
 
         function getStatusColor(s) {
             if (s === 'pending') return 'bg-yellow-500/20 text-yellow-300';
+            if (s === 'accepted') return 'bg-green-500/20 text-green-300';
+            if (s === 'rescheduled') return 'bg-blue-500/20 text-blue-300';
+            if (s === 'called') return 'bg-teal-500/20 text-teal-300 animate-pulse';
             if (s === 'completed') return 'bg-green-500/20 text-green-300';
             if (s === 'cancelled') return 'bg-red-500/20 text-red-300';
             return 'bg-gray-500/20 text-gray-300';
@@ -587,12 +595,24 @@
 
         async function checkQueue(docId, date) {
             try {
-                // Fix date format if full datetime
                 const d = date.split('T')[0];
                 const res = await api.get(`/patient/queue-status?doctor_id=${docId}&date=${d}`);
-                alert(`Current Serving Token for Dr for date ${d}: ${res.current_token}`);
+
+                // Also check if doctor is paused
+                const docDetails = await api.get(`/doctor/me?doctor_id=${docId}`);
+                const banner = document.getElementById('pauseBanner');
+                const reasonEl = document.getElementById('pauseReasonDisplay');
+
+                if (docDetails.is_paused) {
+                    banner.classList.remove('hidden');
+                    reasonEl.innerText = docDetails.pause_reason || "Attending to an emergency.";
+                    showPopup('Consultations Paused', `Dr. ${docDetails.full_name} has temporarily paused consultations.\nReason: ${docDetails.pause_reason}\n\nPlease wait in the lounge.`, 'warning');
+                } else {
+                    banner.classList.add('hidden');
+                    showPopup('Live Queue Status', `Current Serving Token: ${res.current_token}`, 'info');
+                }
             } catch (e) {
-                alert('Could not fetch queue status');
+                showToast('Could not fetch queue status', 'error');
             }
         }
 
@@ -606,82 +626,26 @@
         }
 
         async function changePassword() {
+            const currentPw = document.getElementById('currentPassword').value;
             const newPw = document.getElementById('newPassword').value;
-            if (!newPw) return alert('Please enter a new password');
+            if (!currentPw || !newPw) return showToast('Please enter both current and new passwords', 'warning');
 
             try {
                 const res = await api.post('/auth/change-password', {
                     user_id: userId,
-                    password: newPw
+                    current_password: currentPw,
+                    new_password: newPw
                 });
-                if (res.message) {
-                    alert('Password updated successfully!');
+                if (res.message === 'Password updated successfully') {
+                    showToast('Password updated successfully!', 'success');
                     closeProfileModal();
+                    document.getElementById('currentPassword').value = '';
                     document.getElementById('newPassword').value = '';
                 } else {
-                    alert(res.error || 'Failed to update password');
+                    showToast(res.message || 'Failed to update password', 'error');
                 }
             } catch (e) {
-                alert(e.message);
-            }
-        }
-
-        function updateFileName() {
-            const input = document.getElementById('reportFile');
-            const display = document.getElementById('fileNameDisplay');
-            if (input.files && input.files[0]) {
-                display.innerText = input.files[0].name;
-            } else {
-                display.innerText = "Choose Report (Image/PDF)";
-            }
-        }
-
-        async function analyzeReport() {
-            const fileInput = document.getElementById('reportFile');
-            const lang = document.getElementById('reportLang').value;
-            const btn = document.getElementById('analyzeBtn');
-            const resultArea = document.getElementById('analysisResult');
-            const resultText = document.getElementById('analysisText');
-
-            if (!fileInput.files || !fileInput.files[0]) {
-                return alert('Please select a report file first.');
-            }
-
-            const formData = new FormData();
-            formData.append('report', fileInput.files[0]);
-            formData.append('language', lang);
-
-            try {
-                btn.disabled = true;
-                btn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Analyzing...';
-                resultArea.classList.add('hidden');
-
-                const response = await fetch(`${BASE_URL}/patient/analyze-report`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                const res = await response.json();
-
-                if (res.analysis) {
-                    // Use marked for better formatting if available, else plain text
-                    if (window.marked) {
-                        resultText.innerHTML = marked.parse(res.analysis);
-                    } else {
-                        resultText.innerText = res.analysis;
-                    }
-                    resultArea.classList.remove('hidden');
-                } else {
-                    alert(res.error || 'Failed to analyze report');
-                }
-            } catch (e) {
-                alert('Error: ' + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Analyze Now <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>';
+                showToast(e.message, 'error');
             }
         }
 
@@ -691,6 +655,132 @@
         }
 
         init();
+
+        // Dashboard UI Helpers (Replaces Alerts)
+        function showPopup(title, message, type = 'info', isConfirm = false) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('dashboardPopup');
+                const content = document.getElementById('popupContent');
+                const titleEl = document.getElementById('popupTitle');
+                const msgEl = document.getElementById('popupMessage');
+                const iconEl = document.getElementById('popupIcon');
+                const btnConfirm = document.getElementById('popupConfirm');
+                const btnCancel = document.getElementById('popupCancel');
+
+                titleEl.innerText = title;
+                msgEl.innerText = message;
+
+                // Set Icon and Colors based on type
+                let iconHtml = '';
+                if (type === 'success') {
+                    iconHtml = '<svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'error') {
+                    iconHtml = '<svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else if (type === 'emergency') {
+                    iconHtml = '<svg class="w-12 h-12 text-orange-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+                } else {
+                    iconHtml = '<svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                }
+                iconEl.innerHTML = iconHtml;
+
+                btnCancel.classList.toggle('hidden', !isConfirm);
+                btnConfirm.innerText = isConfirm ? 'Confirm' : 'Got it';
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+
+                const cleanup = (val) => {
+                    content.classList.remove('scale-100', 'opacity-100');
+                    content.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve(val);
+                    }, 300);
+                };
+
+                btnConfirm.onclick = () => cleanup(true);
+                btnCancel.onclick = () => cleanup(false);
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 bg-gray-900/90 backdrop-blur-md border border-white/10 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px] border-l-4 ${type === 'success' ? 'border-l-green-500' : type === 'error' ? 'border-l-red-500' : 'border-l-blue-500'}`;
+
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span class="text-white font-medium">${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Notification System (Background Polling)
+        let activeNotificationId = null;
+
+        async function checkNotifications() {
+            if (!profile || !profile.id) return;
+            try {
+                // Check general notifications
+                const notifications = await api.get(`/patient/notifications?patient_id=${profile.id}`);
+                if (notifications && notifications.length > 0) {
+                    const notif = notifications[0];
+                    if (notif.id !== activeNotificationId) {
+                        activeNotificationId = notif.id;
+                        const type = notif.type === 'CALL_NEXT' ? 'success' : 'info';
+                        const title = notif.type === 'CALL_NEXT' ? 'Doctor is Ready' : 'Appointment Reminder';
+
+                        await showPopup(title, notif.message, type);
+                        loadHistory();
+                        try { await api.post('/patient/notifications/mark-read', { notification_id: notif.id }); } catch (e) { }
+                        activeNotificationId = null;
+                    }
+                }
+
+                // Check for paused doctors today
+                const history = await api.get(`/patient/appointments/${profile.id}`);
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+                let pausedDoctor = null;
+                for (const a of history) {
+                    const apptDate = a.appointment_date.split('T')[0];
+                    if (apptDate === todayStr && (a.status === 'pending' || a.status === 'called' || a.status === 'accepted')) {
+                        const docDetails = await api.get(`/doctor/me?doctor_id=${a.doctor_id}`);
+                        if (docDetails.is_paused) {
+                            pausedDoctor = docDetails;
+                            break;
+                        }
+                    }
+                }
+
+                const banner = document.getElementById('pauseBanner');
+                const reasonEl = document.getElementById('pauseReasonDisplay');
+                if (pausedDoctor) {
+                    banner.classList.remove('hidden');
+                    reasonEl.innerText = `Dr. ${pausedDoctor.full_name} is on a break: ${pausedDoctor.pause_reason || "Emergency"}`;
+                } else {
+                    banner.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error("Failed background check", e);
+            }
+        }
+
+        // Start polling
+        setInterval(checkNotifications, 5000);
     </script>
 </body>
 

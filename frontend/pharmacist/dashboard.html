@@ -80,6 +80,15 @@
                 </svg>
                 <span class="font-medium">Order History</span>
             </button>
+            <button onclick="switchTab('security')" id="nav-security"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                    </path>
+                </svg>
+                <span class="font-medium">Security</span>
+            </button>
         </nav>
 
         <div class="p-4 border-t border-gray-700 bg-gray-800">
@@ -124,6 +133,47 @@
                     </div>
                     Add New Medicine
                 </h3>
+
+                <!-- Bulk Upload Section -->
+                <div
+                    class="mb-8 p-6 bg-purple-900/10 border border-purple-500/20 rounded-2xl relative z-10 hover:bg-purple-900/20 transition cursor-default">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-purple-500/20 rounded-xl text-purple-400">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 17v-2a4 4 0 014-4h12M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-lg">Bulk Upload Medicines</h4>
+                                <p class="text-sm text-gray-400">Upload an Excel file to add multiple medicines at once.
+                                </p>
+                                <p class="text-[10px] text-purple-400 mt-1 uppercase font-bold tracking-widest">Required
+                                    Columns: MEDICINE NAME, DEPARTMENT, PRICE PER UNIT, INITIAL STOCK</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="file" id="bulkExcelFile" accept=".xlsx,.xls" class="hidden"
+                                onchange="updateBulkFileName()">
+                            <label for="bulkExcelFile"
+                                class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold transition cursor-pointer flex items-center gap-2">
+                                <span id="bulkFileNameDisplay">Choose Excel</span>
+                            </label>
+                            <button onclick="uploadBulkMedicines()" id="bulkUploadBtn"
+                                class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg shadow-emerald-900/30 transform active:scale-95 disabled:opacity-50 disabled:scale-100">
+                                Upload & Sync
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 mb-6 relative z-10">
+                    <div class="h-px bg-gray-700 flex-grow"></div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Or manually add below</span>
+                    <div class="h-px bg-gray-700 flex-grow"></div>
+                </div>
 
                 <form id="addMedForm" onsubmit="addMedicine(event)"
                     class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
@@ -198,9 +248,21 @@
                     <p class="text-gray-400 text-sm">View and manage all medicines.</p>
                 </div>
                 <div class="flex items-center gap-4">
+                    <div class="relative group">
+                        <input type="text" id="searchInput" oninput="loadInventoryInternal()"
+                            placeholder="Search medicine..."
+                            class="bg-gray-700/50 border border-white/10 rounded-xl pl-12 pr-6 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all w-64 group-hover:bg-gray-700/80">
+                        <div
+                            class="absolute inset-y-0 left-0 flex items-center px-4 pointer-events-none text-gray-400 group-hover:text-purple-400 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="relative">
                         <select id="filterDeptSelect" onchange="loadInventory()"
-                            class="bg-gray-700/50 border border-white/10 rounded-xl px-6 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none cursor-pointer text-base min-w-[250px]">
+                            class="bg-gray-700/50 border border-white/10 rounded-xl px-6 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none cursor-pointer text-base min-w-[200px]">
                             <option value="">All Departments</option>
                         </select>
                         <div
@@ -343,7 +405,67 @@
             </div>
         </div>
 
+        <!-- Security View -->
+        <div id="securityView" class="max-w-2xl mx-auto animate-fade-in hidden">
+            <header
+                class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Security Settings</h2>
+                    <p class="text-gray-400 text-sm">Update your account password.</p>
+                </div>
+            </header>
+
+            <div class="bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-700/50 space-y-6">
+                <div class="space-y-1">
+                    <label class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">Current
+                        Password</label>
+                    <input type="password" id="currentPharmaPass" placeholder="••••••••"
+                        class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none transition text-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1 ml-1">New
+                        Password</label>
+                    <input type="password" id="newPharmaPass" placeholder="••••••••"
+                        class="w-full bg-gray-900/50 border border-gray-600/50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none transition text-white">
+                </div>
+                <div class="pt-4">
+                    <button onclick="changePharmaPassword()"
+                        class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-purple-900/40 transform active:scale-95 flex items-center justify-center gap-2">
+                        Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
+
+    <!-- Generic Dashboard Popup Modal (Replaces alert/confirm) -->
+    <div id="dashboardPopup"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4 text-center">
+        <div class="bg-gray-900 border border-white/20 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0 duration-300"
+            id="popupContent">
+            <div class="p-8">
+                <div id="popupIcon" class="mb-6 inline-block p-4 rounded-full bg-white/5">
+                    <!-- Icon -->
+                </div>
+                <h3 id="popupTitle" class="text-xl font-bold text-white mb-2">Notice</h3>
+                <p id="popupMessage" class="text-gray-400 leading-relaxed mb-8">Message goes here.</p>
+                <div class="flex gap-4" id="popupActions">
+                    <button id="popupConfirm"
+                        class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-purple-900/40">
+                        Okay
+                    </button>
+                    <button id="popupCancel"
+                        class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition hidden">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-8 right-8 z-[250] space-y-4"></div>
 
     <!-- Edit Modal -->
     <div id="editModal"
@@ -405,6 +527,7 @@
             document.getElementById('medicinesView').classList.add('hidden');
             document.getElementById('ordersView').classList.add('hidden');
             document.getElementById('historyView').classList.add('hidden');
+            document.getElementById('securityView').classList.add('hidden');
 
             if (tab === 'add-medicine') {
                 document.getElementById('addMedicineView').classList.remove('hidden');
@@ -416,10 +539,14 @@
                 loadOrders(); // Loads Today by default
             } else if (tab === 'history') {
                 document.getElementById('historyView').classList.remove('hidden');
+            } else if (tab === 'security') {
+                document.getElementById('securityView').classList.remove('hidden');
             }
         }
 
         async function init() {
+            const res = await api.get('/auth/me');
+            window.pharmaUser = res.user;
             // Load Depts
             try {
                 const depts = await api.get('/patient/departments');
@@ -451,6 +578,7 @@
             try {
                 const res = await api.post('/pharmacy/medicines/add', data);
                 if (res.message) {
+                    showToast('Medicine added successfully!', 'success');
                     // Success visual feedback
                     const btn = form.querySelector('button[type="submit"]');
                     const originalText = btn.innerHTML;
@@ -459,8 +587,64 @@
 
                     form.reset();
                     loadInventory();
-                } else alert(res.error);
-            } catch (err) { alert(err.message); }
+                } else showToast(res.error, 'error');
+            } catch (err) { showToast(err.message, 'error'); }
+        }
+
+        function updateBulkFileName() {
+            const input = document.getElementById('bulkExcelFile');
+            const display = document.getElementById('bulkFileNameDisplay');
+            if (input.files && input.files[0]) {
+                display.innerText = input.files[0].name;
+            } else {
+                display.innerText = "Choose Excel";
+            }
+        }
+
+        async function uploadBulkMedicines() {
+            const fileInput = document.getElementById('bulkExcelFile');
+            const btn = document.getElementById('bulkUploadBtn');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                return showToast('Please select an Excel file first.', 'warning');
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                btn.disabled = true;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Uploading...';
+
+                const response = await fetch(`${BASE_URL}/pharmacy/medicines/bulk-add`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                const res = await response.json();
+
+                if (response.ok) {
+                    showToast(res.message, 'success');
+                    if (res.errors && res.errors.length > 0) {
+                        console.warn('Some rows had errors:', res.errors);
+                        showToast('Some rows could not be added. Check console.', 'warning');
+                    }
+                    fileInput.value = '';
+                    updateBulkFileName();
+                    loadInventory();
+                } else {
+                    showToast(res.error || 'Failed to upload bulk medicines', 'error');
+                }
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Upload & Sync';
+            }
         }
 
         function openEditModal(id, currentPrice, currentStock) {
@@ -487,23 +671,36 @@
                     stock_quantity: stock
                 });
                 if (res.message) {
+                    showToast('Changes saved successfully', 'success');
                     closeEditModal();
                     loadInventory();
-                } else alert(res.error);
-            } catch (err) { alert(err.message); }
+                } else showToast(res.error, 'error');
+            } catch (err) { showToast(err.message, 'error'); }
+        }
+
+        let searchTimeout;
+        function loadInventoryInternal() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadInventory();
+            }, 300);
         }
 
         async function loadInventory() {
             try {
                 const deptId = document.getElementById('filterDeptSelect') ? document.getElementById('filterDeptSelect').value : '';
-                const url = deptId ? `/pharmacy/medicines?department_id=${deptId}` : '/pharmacy/medicines';
+                const searchTerm = document.getElementById('searchInput') ? document.getElementById('searchInput').value : '';
+
+                let url = '/pharmacy/medicines?';
+                if (deptId) url += `department_id=${deptId}&`;
+                if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}`;
 
                 const meds = await api.get(url);
                 const tbody = document.getElementById('inventoryTable');
                 if (!tbody) return;
 
                 if (meds.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-gray-500">No medicines found. Use the form above to add some.</td></tr>';
+                    tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-gray-500">${searchTerm ? 'No medicines found matching your search.' : 'No medicines found. Use the form above to add some.'}</td></tr>`;
                     return;
                 }
 
@@ -589,6 +786,98 @@
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        async function changePharmaPassword() {
+            const currentPass = document.getElementById('currentPharmaPass').value;
+            const newPass = document.getElementById('newPharmaPass').value;
+            if (!currentPass || !newPass) return showToast('Please fill both fields', 'warning');
+
+            try {
+                const res = await api.post('/auth/change-password', {
+                    user_id: window.pharmaUser.id,
+                    current_password: currentPass,
+                    new_password: newPass
+                });
+                if (res.message === 'Password updated successfully') {
+                    showToast('Password updated successfully!', 'success');
+                    document.getElementById('currentPharmaPass').value = '';
+                    document.getElementById('newPharmaPass').value = '';
+                } else {
+                    showToast(res.message || 'Failed to update password', 'error');
+                }
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
+        }
+
+        // Dashboard UI Helpers (Replaces Alerts)
+        function showPopup(title, message, type = 'info', isConfirm = false) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('dashboardPopup');
+                const content = document.getElementById('popupContent');
+                const titleEl = document.getElementById('popupTitle');
+                const msgEl = document.getElementById('popupMessage');
+                const iconEl = document.getElementById('popupIcon');
+                const btnConfirm = document.getElementById('popupConfirm');
+                const btnCancel = document.getElementById('popupCancel');
+
+                titleEl.innerText = title;
+                msgEl.innerText = message;
+
+                // Set Icon and Colors based on type
+                let iconHtml = '';
+                if (type === 'success') {
+                    iconHtml = '<svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                } else if (type === 'error') {
+                    iconHtml = '<svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else {
+                    iconHtml = '<svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                }
+                iconEl.innerHTML = iconHtml;
+
+                btnCancel.classList.toggle('hidden', !isConfirm);
+                btnConfirm.innerText = isConfirm ? 'Confirm' : 'Got it';
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 10);
+
+                const cleanup = (val) => {
+                    content.classList.remove('scale-100', 'opacity-100');
+                    content.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        resolve(val);
+                    }, 300);
+                };
+
+                btnConfirm.onclick = () => cleanup(true);
+                btnCancel.onclick = () => cleanup(false);
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 bg-gray-900/90 backdrop-blur-md border border-white/10 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px] border-l-4 ${type === 'success' ? 'border-l-purple-500' : type === 'error' ? 'border-l-red-500' : 'border-l-yellow-500'}`;
+
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span class="text-white font-medium">${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         }
 
         init();
