@@ -6,3 +6,5 @@ bcrypt
 reportlab
 requests
 python-dotenv
+google-generativeai
+pillow

@@ -7,6 +7,7 @@
     <title>Patient Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -153,6 +154,77 @@
                     <p class="text-sm text-emerald-100/80 mb-0">Buy medicines online securely.</p>
                 </div>
 
+                <!-- Report Analyzer Card -->
+                <div
+                    class="bg-gradient-to-br from-indigo-600/20 to-purple-900/40 backdrop-blur-md rounded-3xl p-6 border border-indigo-500/30 shadow-2xl relative overflow-hidden">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-white">
+                        <span class="bg-indigo-500 p-1.5 rounded-lg shadow-lg shadow-indigo-500/40">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </span>
+                        Report Analyzer AI
+                    </h2>
+                    <p class="text-xs text-indigo-200 mb-4 bg-indigo-900/30 p-2 rounded border border-indigo-500/20">
+                        Upload your medical report and get AI-powered analysis in your preferred language.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <input type="file" id="reportFile" accept=".jpg,.jpeg,.png,.pdf" class="hidden"
+                                onchange="updateFileName()">
+                            <label for="reportFile"
+                                class="w-full flex items-center justify-center gap-2 bg-black/40 border border-indigo-400/30 rounded-xl px-4 py-3 text-white cursor-pointer hover:bg-black/50 transition">
+                                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                <span id="fileNameDisplay">Choose Report (Image/PDF)</span>
+                            </label>
+                        </div>
+
+                        <div class="relative">
+                            <select id="reportLang"
+                                class="w-full bg-black/40 border border-indigo-400/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none backdrop-blur-sm transition hover:bg-black/50">
+                                <option class="bg-gray-800" value="English">English</option>
+                                <option class="bg-gray-800" value="Hindi">Hindi</option>
+                                <option class="bg-gray-800" value="Telugu">Telugu</option>
+                                <option class="bg-gray-800" value="Tamil">Tamil</option>
+                                <option class="bg-gray-800" value="Kannada">Kannada</option>
+                                <option class="bg-gray-800" value="Malayalam">Malayalam</option>
+                                <option class="bg-gray-800" value="Bengali">Bengali</option>
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 top-0 flex items-center px-4 text-indigo-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <button onclick="analyzeReport()" id="analyzeBtn"
+                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-500 hover:to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-500/40 transform transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+                            Analyze Now
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div id="analysisResult" class="mt-4 hidden animate-fade-in">
+                        <div
+                            class="p-4 bg-black/40 rounded-2xl border border-white/10 text-sm text-indigo-100 max-h-48 overflow-y-auto">
+                            <h3 class="font-bold text-white mb-2 underline">Analysis:</h3>
+                            <div id="analysisText"></div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
@@ -497,7 +569,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </button>
                             ${a.status !== 'cancelled' ? `
-                            <a href="/api/patient/prescription/download/${a.id}" target="_blank" class="text-green-300 hover:text-green-200" title="Download PDF">
+                            <a href="${BASE_URL}/patient/prescription/download/${a.id}" target="_blank" class="text-green-300 hover:text-green-200" title="Download PDF">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             </a>` : ''}
                         </div>
@@ -551,6 +623,65 @@
                 }
             } catch (e) {
                 alert(e.message);
+            }
+        }
+
+        function updateFileName() {
+            const input = document.getElementById('reportFile');
+            const display = document.getElementById('fileNameDisplay');
+            if (input.files && input.files[0]) {
+                display.innerText = input.files[0].name;
+            } else {
+                display.innerText = "Choose Report (Image/PDF)";
+            }
+        }
+
+        async function analyzeReport() {
+            const fileInput = document.getElementById('reportFile');
+            const lang = document.getElementById('reportLang').value;
+            const btn = document.getElementById('analyzeBtn');
+            const resultArea = document.getElementById('analysisResult');
+            const resultText = document.getElementById('analysisText');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                return alert('Please select a report file first.');
+            }
+
+            const formData = new FormData();
+            formData.append('report', fileInput.files[0]);
+            formData.append('language', lang);
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Analyzing...';
+                resultArea.classList.add('hidden');
+
+                const response = await fetch(`${BASE_URL}/patient/analyze-report`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                const res = await response.json();
+
+                if (res.analysis) {
+                    // Use marked for better formatting if available, else plain text
+                    if (window.marked) {
+                        resultText.innerHTML = marked.parse(res.analysis);
+                    } else {
+                        resultText.innerText = res.analysis;
+                    }
+                    resultArea.classList.remove('hidden');
+                } else {
+                    alert(res.error || 'Failed to analyze report');
+                }
+            } catch (e) {
+                alert('Error: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Analyze Now <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>';
             }
         }
 

@@ -1,5 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 from routes.auth import auth_bp
 from routes.patient import patient_bp
 from routes.doctor import doctor_bp
