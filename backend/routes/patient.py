@@ -94,14 +94,24 @@ def book_appointment():
                        (patient_id, doctor_id, date, time, token, atype))
         appt_id = cursor.fetchone()['id']
         
+        # Commit the appointment to database
+        conn.commit()
+        
         # Send SMS
         # Fetch details for SMS
+        print(f"[BOOKING] Fetching patient phone for patient_id: {patient_id}")
         cursor.execute("SELECT phone FROM patients WHERE id=%s", (patient_id,))
         p_res = cursor.fetchone()
+        
         if p_res:
+            patient_phone = p_res['phone']
+            print(f"[BOOKING] Patient phone found: {patient_phone}")
             msg = f"Thank you for booking appointment on {date} at {time} for your health issue. Please arrive at the hospital at least 30 minutes before the appointment time."
-            sms_sent = send_sms(p_res['phone'], msg)
+            print(f"[BOOKING] Calling send_sms() function...")
+            sms_sent = send_sms(patient_phone, msg)
+            print(f"[BOOKING] SMS Result: {sms_sent}")
         else:
+            print(f"[BOOKING] ERROR: No patient found with ID {patient_id}")
             sms_sent = False
             
         return jsonify({"message": "Appointment booked successfully", "token": token, "appointment_id": appt_id, "sms_sent": sms_sent}), 201
