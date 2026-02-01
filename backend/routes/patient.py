@@ -326,3 +326,133 @@ def mark_notification_read():
     conn.close()
     return jsonify({"message": "Notification marked as read"})
 
+@patient_bp.route('/ai-chat', methods=['POST'])
+def ai_chat():
+    """
+    AI Health Assistant chatbot endpoint
+    """
+    data = request.json
+    user_message = data.get('message', '')
+    
+    if not user_message:
+        return jsonify({"error": "Message is required"}), 400
+    
+    try:
+        from config import Config
+        api_key = Config.GEMINI_API_KEY
+        
+        # DEMO MODE FALLBACK
+        if not api_key:
+            print("[AI CHAT] API Key missing - Using enhanced demo responses")
+            import time
+            time.sleep(1)  # Simulate processing
+            
+            # Enhanced keyword-based demo responses
+            msg_lower = user_message.lower()
+            
+            # Greetings
+            if any(word in msg_lower for word in ['hello', 'hi', 'hey', 'good morning', 'good evening']):
+                response = "Hello! 👋 I'm your AI Health Assistant.\n\nI can help you with:\n• Common health queries\n• Basic symptom assessment\n• General health advice\n• Booking appointments\n• First aid guidance\n\nWhat health concern can I help you with today?"
+            
+            # Thanks
+            elif any(word in msg_lower for word in ['thank', 'thanks', 'appreciate']):
+                response = "You're welcome! 😊\n\nI'm here whenever you need health advice. Stay healthy and take care!\n\nRemember: For serious symptoms, please book an appointment with our doctors immediately."
+            
+            # Fever
+            elif any(word in msg_lower for word in ['fever', 'temperature', 'hot', 'burning']):
+                response = "**For Fever Management:**\n\n✅ **Immediate Steps:**\n• Rest in a cool room\n• Drink plenty of fluids (water, ORS)\n• Take paracetamol/acetaminophen (500mg every 6 hours)\n• Use cold compress on forehead\n• Wear light clothing\n\n⚠️ **See a Doctor If:**\n• Fever above 103°F (39.4°C)\n• Lasts more than 3 days\n• Accompanied by severe headache, rash, or difficulty breathing\n• In children under 3 months\n\nWould you like me to help you book an appointment?"
+            
+            # Headache
+            elif any(word in msg_lower for word in ['headache', 'head pain', 'migraine', 'head ache']):
+                response = "**For Headache Relief:**\n\n✅ **Try These:**\n• Rest in a quiet, dark room\n• Stay well hydrated\n• Apply cold or warm compress\n• Gentle head massage\n• Avoid screens and bright lights\n• Take paracetamol if needed\n\n⚠️ **Seek Immediate Care If:**\n• Sudden severe headache (worst of your life)\n• Accompanied by fever, stiff neck, confusion\n• After head injury\n• With vision changes or weakness\n\nShould I help you schedule a consultation?"
+            
+            # Cold, Cough, Flu
+            elif any(word in msg_lower for word in ['cold', 'cough', 'flu', 'sneeze', 'runny nose', 'congestion']):
+                response = "**For Cold & Cough:**\n\n✅ **Home Remedies:**\n• Drink warm fluids (herbal tea, soup)\n• Steam inhalation 2-3 times daily\n• Honey and ginger tea\n• Gargle with warm salt water\n• Get adequate rest (7-8 hours)\n• Use humidifier at night\n\n💊 **Medication:**\n• Antihistamines for runny nose\n• Cough syrup if needed\n\n⚠️ **Consult Doctor If:**\n• Symptoms last more than 7 days\n• High fever (above 101°F)\n• Difficulty breathing\n• Chest pain or wheezing\n\nNeed help booking an appointment?"
+            
+            # Stomach/Digestive Issues
+            elif any(word in msg_lower for word in ['stomach', 'belly', 'digest', 'nausea', 'vomit', 'diarrhea', 'constipation']):
+                response = "**For Stomach Issues:**\n\n✅ **Immediate Relief:**\n• Eat light, bland foods (rice, banana, toast)\n• Avoid spicy, oily, or heavy foods\n• Stay hydrated with ORS or coconut water\n• Ginger tea for nausea\n• Small, frequent meals\n\n⚠️ **Emergency - Go to ER If:**\n• Severe abdominal pain\n• Blood in vomit or stool\n• High fever with stomach pain\n• Unable to keep fluids down\n• Signs of dehydration\n\nWould you like to book an urgent appointment?"
+            
+            # Sore Throat
+            elif any(word in msg_lower for word in ['throat', 'sore throat', 'swallow', 'tonsil']):
+                response = "**For Sore Throat:**\n\n✅ **Relief Measures:**\n• Gargle with warm salt water (4-5 times daily)\n• Drink warm liquids (tea, soup)\n• Honey and lemon water\n• Throat lozenges\n• Stay hydrated\n• Avoid cold drinks\n\n💊 **Medication:**\n• Paracetamol for pain\n• Throat spray if needed\n\n⚠️ **See Doctor If:**\n• Difficulty breathing or swallowing\n• High fever\n• White patches on tonsils\n• Lasts more than 3 days\n\nShould I help you schedule a consultation?"
+            
+            # Body Pain/Aches
+            elif any(word in msg_lower for word in ['body pain', 'body ache', 'muscle pain', 'joint pain', 'back pain']):
+                response = "**For Body Pain/Aches:**\n\n✅ **Relief Options:**\n• Rest the affected area\n• Apply warm compress\n• Gentle stretching\n• Over-the-counter pain reliever\n• Stay hydrated\n• Maintain good posture\n\n🏃 **For Prevention:**\n• Regular exercise\n• Proper sleep\n• Ergonomic workspace\n\n⚠️ **Consult Doctor If:**\n• Severe or persistent pain\n• Pain after injury\n• Numbness or tingling\n• Difficulty moving\n\nWant to book a consultation?"
+            
+            # Allergies
+            elif any(word in msg_lower for word in ['allergy', 'allergic', 'rash', 'itch', 'skin']):
+                response = "**For Allergies:**\n\n✅ **Immediate Steps:**\n• Identify and avoid the allergen\n• Take antihistamine\n• Apply calamine lotion for itching\n• Cool compress on affected area\n• Don't scratch\n\n⚠️ **Emergency - Call 911 If:**\n• Difficulty breathing\n• Swelling of face, lips, tongue\n• Severe reaction after bee sting/food\n• Dizziness or fainting\n\nNeed non-emergency consultation? I can help book an appointment."
+            
+            # Sleep Issues
+            elif any(word in msg_lower for word in ['sleep', 'insomnia', 'cant sleep', 'tired', 'fatigue']):
+                response = "**For Better Sleep:**\n\n✅ **Sleep Hygiene Tips:**\n• Fixed sleep schedule (even weekends)\n• Avoid screens 1 hour before bed\n• Keep bedroom dark and cool\n• No caffeine after 3 PM\n• Light dinner 2-3 hours before sleep\n• Relaxation exercises\n\n⚠️ **Consult Doctor If:**\n• Chronic insomnia (weeks)\n• Excessive daytime sleepiness\n• Snoring with breathing pauses\n• Persistent fatigue despite rest\n\nWould you like to book a consultation with our sleep specialist?"
+            
+            # Diabetes Related
+            elif any(word in msg_lower for word in ['diabetes', 'sugar', 'blood sugar', 'glucose']):
+                response = "**Diabetes Management:**\n\n⚠️ **Important:** For diabetes, regular doctor consultation is essential.\n\n✅ **General Tips:**\n• Monitor blood sugar regularly\n• Follow prescribed medication\n• Balanced diet (low sugar, high fiber)\n• Regular exercise (30 min daily)\n• Foot care\n• Annual eye check\n\n📋 **Emergency Signs:**\n• Very high/low blood sugar\n• Excessive thirst/urination\n• Blurred vision\n• Numbness in extremities\n\nI strongly recommend booking an appointment with our endocrinologist."
+            
+            # Blood Pressure
+            elif any(word in msg_lower for word in ['blood pressure', 'bp', 'hypertension', 'high bp', 'low bp']):
+                response = "**Blood Pressure Management:**\n\n✅ **Lifestyle Measures:**\n• Reduce salt intake\n• Regular exercise\n• Maintain healthy weight\n• Limit alcohol\n• Stress management\n• Adequate sleep\n\n⚠️ **Monitor & Check:**\n• Regular BP measurement\n• Take medications as prescribed\n• Keep track of readings\n\n🚨 **Emergency - Seek Immediate Help If:**\n• BP above 180/120\n• Severe headache\n• Chest pain\n• Difficulty breathing\n\nWould you like to book a cardiology consultation?"
+            
+            # General Pain
+            elif 'pain' in msg_lower or 'hurt' in msg_lower or 'ache' in msg_lower:
+                response = "**For Pain Management:**\n\n✅ **General Advice:**\n• Rest the affected area\n• Apply ice for new injuries (first 48 hours)\n• Apply heat for chronic pain\n• Over-the-counter pain relievers\n• Gentle movement when possible\n\n⚠️ **See Doctor If:**\n• Severe or worsening pain\n• Pain after injury\n• Persistent pain\n• Accompanied by fever, swelling, or redness\n\nCould you specify where the pain is located? I can provide more specific advice.\n\nWould you like to book an appointment?"
+            
+            # Appointment/Booking Related
+            elif any(word in msg_lower for word in ['appointment', 'book', 'schedule', 'doctor', 'consultation']):
+                response = "**Booking an Appointment:**\n\n✅ I can help you with that!\n\nTo book an appointment:\n1. Close this chat\n2. Fill in the 'Book Appointment' form on your dashboard\n3. Select department, doctor, date, and time\n4. You'll receive SMS confirmation\n\n🚨 **For Emergencies:**\nUse the 'Emergency SOS' button for immediate priority booking.\n\n📞 **Need Help?**\nOur reception is available 24/7 at the hospital.\n\nWhat type of specialist are you looking for?"
+            
+            # How are you
+            elif any(phrase in msg_lower for phrase in ['how are you', 'how r u', 'whats up', "what's up"]):
+                response = "I'm functioning perfectly, thank you for asking! 🤖✨\n\nMore importantly, how are YOU feeling today? Do you have any health concerns I can help you with?\n\nI'm here to:\n• Answer health questions\n• Provide medical advice\n• Help you understand symptoms\n• Guide you to appropriate care"
+            
+            # Emergency Keywords
+            elif any(word in msg_lower for word in ['emergency', 'urgent', 'serious', 'ambulance', 'critical']):
+                response = "🚨 **THIS SOUNDS URGENT!**\n\n⚠️ **For Life-Threatening Emergencies:**\n• Call Emergency Services IMMEDIATELY: 112\n• Or visit nearest Emergency Room\n\n**Emergency Signs:**\n• Chest pain or pressure\n• Difficulty breathing\n• Severe bleeding\n• Loss of consciousness\n• Severe allergic reaction\n• Stroke symptoms (face drooping, arm weakness, speech difficulty)\n\n**For Urgent but Non-Emergency:**\nUse our 'Emergency SOS' button on the dashboard for priority doctor consultation.\n\nIs this a life-threatening emergency? If YES, please call 112 now!"
+            
+            # Default/Fallback Response
+            else:
+                response = f"I understand you're asking about: **{user_message}**\n\n📋 **For Best Help:**\nCould you provide more details?\n• When did symptoms start?\n• How severe are they (1-10)?\n• Any other symptoms?\n• Any existing conditions?\n\n💡 **I Can Help With:**\n• Fever & common cold\n• Headaches\n• Stomach issues\n• Body pains\n• Allergies\n• Sleep problems\n• And more...\n\n⚠️ **Important:**\nFor serious symptoms or if unsure, please book an appointment with our doctors.\n\n🔍 **Quick Tips:**\nTry asking more specific questions like:\n\"What should I do for a headache?\"\n\"How to treat fever at home?\"\n\"I have stomach pain, what to do?\""
+            
+            return jsonify({"response": response})
+        
+        # Real AI Mode with Gemini
+        client = genai.Client(api_key=api_key)
+        
+        system_prompt = """You are a helpful medical AI assistant for a hospital management system. 
+Your role is to:
+1. Provide general health advice for common minor ailments
+2. Help patients understand their symptoms
+3. Guide them on when to seek professional medical help
+4. Be empathetic and supportive
+
+IMPORTANT GUIDELINES:
+- Always recommend seeing a doctor for serious symptoms
+- Never diagnose conditions definitively
+- Provide first aid and self-care tips for minor issues
+- Be concise but caring in your responses
+- If symptoms seem serious, strongly recommend booking an appointment
+- Keep responses under 150 words unless absolutely necessary
+
+Remember: You are NOT a replacement for a doctor, but a helpful guide."""
+
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=[
+                {"role": "user", "parts": [{"text": system_prompt}]},
+                {"role": "user", "parts": [{"text": user_message}]}
+            ]
+        )
+        
+        return jsonify({"response": response.text})
+        
+    except Exception as e:
+        print(f"[AI CHAT] Error: {e}")
+        return jsonify({
+            "response": "I apologize, but I'm having trouble processing your request right now. For immediate assistance, please book an appointment with one of our doctors."
+        }), 200  # Return 200 to avoid frontend errors
+

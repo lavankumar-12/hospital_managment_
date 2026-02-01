@@ -181,6 +181,33 @@
                     <p class="text-sm text-indigo-100/80 mb-0">Get AI-powered analysis of your medical reports.</p>
                 </div>
 
+                <!-- AI Health Assistant Card -->
+                <div onclick="openChatbot()"
+                    class="cursor-pointer group relative bg-gradient-to-br from-pink-600/20 to-rose-900/40 backdrop-blur-md rounded-3xl p-6 border border-pink-500/30 shadow-2xl overflow-hidden hover:bg-pink-600/30 transition duration-300">
+                    <div
+                        class="absolute -right-6 -top-6 w-24 h-24 bg-pink-500/20 rounded-full blur-2xl group-hover:bg-pink-400/30 transition">
+                    </div>
+
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <span class="bg-pink-500 p-1.5 rounded-lg shadow-lg shadow-pink-500/40">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                                    </path>
+                                </svg>
+                            </span>
+                            AI Health Assistant
+                        </h2>
+                        <svg class="w-5 h-5 text-pink-300 group-hover:translate-x-1 transition" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-pink-100/80 mb-0">Chat with AI for quick health advice and guidance.</p>
+                </div>
+
             </div>
 
             <!-- Right Column: History & Status -->
@@ -338,7 +365,107 @@
         </div>
     </div>
 
+    <!-- AI Chatbot Modal -->
+    <div id="chatbotModal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="bg-gray-900 rounded-3xl w-full max-w-2xl h-[600px] border border-white/10 shadow-2xl overflow-hidden flex flex-col">
+            <div
+                class="p-6 bg-gradient-to-r from-pink-900/50 to-rose-900/50 flex justify-between items-center border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="bg-pink-500 p-2 rounded-lg shadow-lg shadow-pink-500/40">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">AI Health Assistant</h2>
+                        <p class="text-xs text-pink-200">Ask me about your health concerns</p>
+                    </div>
+                </div>
+                <button onclick="closeChatbot()" class="text-gray-400 hover:text-white transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth">
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-3 animate-fade-in">
+                    <div class="bg-pink-500 p-2 rounded-full flex-shrink-0">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div
+                        class="bg-white/10 backdrop-blur-md rounded-2xl rounded-tl-none p-4 max-w-[80%] border border-white/10">
+                        <p class="text-white text-sm leading-relaxed">
+                            Hello! 👋 I'm your AI Health Assistant.<br><br>
+                            I can help you with:<br>
+                            • Common health queries<br>
+                            • Basic symptom assessment<br>
+                            • General health advice<br>
+                            • Guidance on when to see a doctor<br><br>
+                            How can I assist you today?
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator (Hidden by default) -->
+            <div id="typingIndicator" class="hidden px-6 pb-2">
+                <div class="flex items-start gap-3">
+                    <div class="bg-pink-500 p-2 rounded-full flex-shrink-0">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl rounded-tl-none p-4 border border-white/10">
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 0ms">
+                            </div>
+                            <div class="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 150ms">
+                            </div>
+                            <div class="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 300ms">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="p-6 border-t border-white/10 bg-black/20">
+                <form id="chatForm" onsubmit="sendMessage(event)" class="flex gap-3">
+                    <input type="text" id="chatInput" placeholder="Type your health question here..."
+                        class="flex-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 placeholder-gray-400"
+                        autocomplete="off">
+                    <button type="submit"
+                        class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white px-6 py-3 rounded-xl shadow-lg shadow-pink-500/30 transition transform active:scale-95 flex items-center gap-2">
+                        <span class="font-medium">Send</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </form>
+                <p class="text-xs text-gray-500 mt-2 text-center">
+                    💡 For serious symptoms, please book an appointment with our doctors
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Generic Dashboard Popup Modal (Replaces alert/confirm) -->
+
     <div id="dashboardPopup"
         class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4">
         <div class="bg-gray-900 border border-white/20 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-95 opacity-0 duration-300"
@@ -787,6 +914,114 @@
 
         // Start polling
         setInterval(checkNotifications, 5000);
+
+        // ============== AI CHATBOT FUNCTIONS ==============
+
+        function openChatbot() {
+            document.getElementById('chatbotModal').classList.remove('hidden');
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('chatInput').focus();
+            }, 100);
+        }
+
+        function closeChatbot() {
+            document.getElementById('chatbotModal').classList.add('hidden');
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Clear input
+            input.value = '';
+
+            // Add user message to chat
+            addUserMessage(message);
+
+            // Show typing indicator
+            document.getElementById('typingIndicator').classList.remove('hidden');
+
+            try {
+                const response = await api.post('/patient/ai-chat', { message: message });
+
+                // Hide typing indicator
+                document.getElementById('typingIndicator').classList.add('hidden');
+
+                // Add AI response
+                if (response.response) {
+                    addAIMessage(response.response);
+                } else {
+                    addAIMessage("I apologize, but I couldn't process that. Please try again or book an appointment with our doctors.");
+                }
+            } catch (error) {
+                document.getElementById('typingIndicator').classList.add('hidden');
+                addAIMessage("I'm having trouble connecting right now. Please try again in a moment.");
+                console.error('Chatbot error:', error);
+            }
+
+            // Scroll to bottom
+            scrollChatToBottom();
+        }
+
+        function addUserMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start gap-3 justify-end animate-fade-in';
+            messageDiv.innerHTML = `
+                <div class="bg-gradient-to-r from-pink-600 to-rose-600 backdrop-blur-md rounded-2xl rounded-tr-none p-4 max-w-[80%] border border-pink-500/30 shadow-lg">
+                    <p class="text-white text-sm leading-relaxed">${escapeHtml(text)}</p>
+                </div>
+                <div class="bg-blue-500 p-2 rounded-full flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollChatToBottom();
+        }
+
+        function addAIMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex items-start gap-3 animate-fade-in';
+
+            // Convert markdown-style line breaks to HTML
+            const formattedText = text.replace(/\n/g, '<br>');
+
+            messageDiv.innerHTML = `
+                <div class="bg-pink-500 p-2 rounded-full flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl rounded-tl-none p-4 max-w-[80%] border border-white/10">
+                    <p class="text-white text-sm leading-relaxed">${formattedText}</p>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollChatToBottom();
+        }
+
+        function scrollChatToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
     </script>
 </body>
 
