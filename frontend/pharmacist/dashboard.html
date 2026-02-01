@@ -7,6 +7,7 @@
     <title>Pharmacy Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -18,7 +19,7 @@
             border-right: 3px solid #8b5cf6;
         }
 
-        /* Custom Scrollbar for the main content area */
+        /* Custom Scrollbar */
         main::-webkit-scrollbar {
             width: 8px;
         }
@@ -48,8 +49,17 @@
         </div>
 
         <nav class="flex-1 p-4 space-y-2 mt-2">
-            <button onclick="switchTab('add-medicine')" id="nav-add-medicine"
+            <button onclick="switchTab('dashboard')" id="nav-dashboard"
                 class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400 active">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+                <span class="font-medium">Overview</span>
+            </button>
+            <button onclick="switchTab('add-medicine')" id="nav-add-medicine"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -107,8 +117,154 @@
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto p-8 relative bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
 
+        <!-- Dashboard Overview View -->
+        <div id="dashboardView" class="max-w-6xl mx-auto animate-fade-in">
+            <header
+                class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Dashboard Overview</h2>
+                    <p class="text-gray-400 text-sm">Real-time pharmacy analytics and insights.</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-400">Today's Revenue</p>
+                    <p class="text-2xl font-bold text-emerald-400 font-mono" id="todayRevenueDisplay">₹0.00</p>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Medicines -->
+                <div
+                    class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-blue-500/10 rounded-full group-hover:scale-110 transition">
+                    </div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="p-3 bg-blue-500/20 rounded-xl text-blue-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Total Medicines</p>
+                            <h3 class="text-2xl font-bold text-white" id="statTotalMedicines">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alert -->
+                <div
+                    class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-red-500/10 rounded-full group-hover:scale-110 transition">
+                    </div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="p-3 bg-red-500/20 rounded-xl text-red-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Low Stock Alerts</p>
+                            <h3 class="text-2xl font-bold text-red-500" id="statLowStock">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Revenue -->
+                <div
+                    class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full group-hover:scale-110 transition">
+                    </div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="p-3 bg-emerald-500/20 rounded-xl text-emerald-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Total Revenue</p>
+                            <h3 class="text-2xl font-bold text-white font-mono" id="statTotalRevenue">₹0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders Count -->
+                <div
+                    class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-purple-500/10 rounded-full group-hover:scale-110 transition">
+                    </div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="p-3 bg-purple-500/20 rounded-xl text-purple-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Active Inventory</p>
+                            <h3 class="text-2xl font-bold text-white">Active</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Top Selling Medicines Chart -->
+                <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl">
+                    <h3 class="text-lg font-bold text-white mb-6">Top Selling Medicines</h3>
+                    <div class="h-64">
+                        <canvas id="topSellingChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Inventory Distribution (Pie/Doughnut) -->
+                <div class="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl">
+                    <h3 class="text-lg font-bold text-white mb-6">Inventory Status</h3>
+                    <div class="flex items-center justify-center h-64">
+                        <canvas id="inventoryStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions Table -->
+            <div class="bg-gray-800 rounded-3xl overflow-hidden shadow-xl border border-gray-700/50">
+                <div
+                    class="p-6 bg-gray-800/80 border-b border-gray-700 flex justify-between items-center backdrop-blur-md">
+                    <h3 class="font-bold text-gray-200">Recent Transactions</h3>
+                    <button onclick="switchTab('orders')"
+                        class="text-xs text-purple-400 hover:text-purple-300 font-bold uppercase tracking-wider">View
+                        All</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider font-semibold">
+                                <th class="py-4 px-6 border-b border-gray-700/50">Order ID</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Amount</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50">Date</th>
+                                <th class="py-4 px-6 border-b border-gray-700/50 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactionsTable" class="text-sm text-gray-300 divide-y divide-gray-700/50">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- Add Medicine View -->
-        <div id="addMedicineView" class="max-w-6xl mx-auto animate-fade-in">
+        <div id="addMedicineView" class="max-w-6xl mx-auto animate-fade-in hidden">
             <header
                 class="mb-8 flex justify-between items-center bg-gray-800/50 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
                 <div>
@@ -511,6 +667,9 @@
     <script>
         checkAuth('pharmacist');
 
+        let inventoryChartInstance = null;
+        let topSellingChartInstance = null;
+
         function logout() {
             localStorage.clear();
             window.location.href = '../login.html';
@@ -522,21 +681,24 @@
             document.getElementById(`nav-${tab}`).classList.add('active');
 
             // Update Views
-            // Update Views
+            document.getElementById('dashboardView').classList.add('hidden');
             document.getElementById('addMedicineView').classList.add('hidden');
             document.getElementById('medicinesView').classList.add('hidden');
             document.getElementById('ordersView').classList.add('hidden');
             document.getElementById('historyView').classList.add('hidden');
             document.getElementById('securityView').classList.add('hidden');
 
-            if (tab === 'add-medicine') {
+            if (tab === 'dashboard') {
+                document.getElementById('dashboardView').classList.remove('hidden');
+                loadDashboardStats();
+            } else if (tab === 'add-medicine') {
                 document.getElementById('addMedicineView').classList.remove('hidden');
             } else if (tab === 'medicines') {
                 document.getElementById('medicinesView').classList.remove('hidden');
                 loadInventory();
             } else if (tab === 'orders') {
                 document.getElementById('ordersView').classList.remove('hidden');
-                loadOrders(); // Loads Today by default
+                loadOrders();
             } else if (tab === 'history') {
                 document.getElementById('historyView').classList.remove('hidden');
             } else if (tab === 'security') {
@@ -561,7 +723,112 @@
 
             } catch (e) { console.error('Failed to load depts', e); }
 
-            loadInventory();
+            // Default to dashboard
+            switchTab('dashboard');
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const stats = await api.get('/pharmacy/dashboard-stats');
+
+                // 1. Update Cards
+                document.getElementById('statTotalMedicines').innerText = stats.inventory.total;
+                document.getElementById('statLowStock').innerText = stats.inventory.low_stock;
+                document.getElementById('statTotalRevenue').innerText = `₹${stats.revenue.total_revenue.toLocaleString()}`;
+
+                // Update Today's Revenue in Header
+                document.getElementById('todayRevenueDisplay').innerText = `₹${stats.revenue.today_revenue.toLocaleString()}`;
+
+                // 2. Render Charts
+                renderCharts(stats);
+
+                // 3. Update Recent Transactions Table
+                const tbody = document.getElementById('recentTransactionsTable');
+                if (stats.recent_transactions.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">No recent transactions.</td></tr>`;
+                } else {
+                    tbody.innerHTML = stats.recent_transactions.map(t => `
+                        <tr class="border-b border-gray-700/50 last:border-0 hover:bg-gray-800/50 transition">
+                            <td class="py-3 px-6 text-purple-400 font-mono">#${t.id}</td>
+                            <td class="py-3 px-6 font-bold text-white">₹${t.total_amount}</td>
+                            <td class="py-3 px-6 text-gray-500 text-xs">${new Date(t.created_at).toLocaleDateString()}</td>
+                            <td class="py-3 px-6 text-right">
+                                <span class="bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs font-bold uppercase border border-green-500/20">${t.status}</span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+            } catch (e) {
+                console.error("Failed to load dashboard stats", e);
+                showToast("Failed to load dashboard statistics", "error");
+            }
+        }
+
+        function renderCharts(stats) {
+            // --- Top Selling Chart ---
+            const ctxTop = document.getElementById('topSellingChart').getContext('2d');
+
+            if (topSellingChartInstance) topSellingChartInstance.destroy();
+
+            const topLabels = stats.top_selling.map(item => item.name);
+            const topData = stats.top_selling.map(item => item.sold);
+
+            topSellingChartInstance = new Chart(ctxTop, {
+                type: 'bar',
+                data: {
+                    labels: topLabels,
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: topData,
+                        backgroundColor: '#8b5cf6',
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#a78bfa'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1f2937', titleColor: '#fff', bodyColor: '#fff', padding: 10, cornerRadius: 8 }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                        x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                    }
+                }
+            });
+
+            // --- Inventory Status Chart ---
+            const ctxInv = document.getElementById('inventoryStatusChart').getContext('2d');
+
+            if (inventoryChartInstance) inventoryChartInstance.destroy();
+
+            const stockOk = stats.inventory.total - stats.inventory.low_stock;
+            const stockLow = stats.inventory.low_stock;
+
+            inventoryChartInstance = new Chart(ctxInv, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Healthy Stock', 'Low Stock'],
+                    datasets: [{
+                        data: [stockOk, stockLow],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#fff', usePointStyle: true, padding: 20 } },
+                        tooltip: { backgroundColor: '#1f2937', bodyColor: '#fff', padding: 10 }
+                    }
+                }
+            });
         }
 
         async function addMedicine(e) {

@@ -64,13 +64,20 @@ def get_all_patients():
     conn.close()
     return jsonify(patients)
 
-@admin_bp.route('/todays-appointments', methods=['GET'])
-def get_todays_appointments():
-    today = datetime.date.today().isoformat()
+@admin_bp.route('/appointments', methods=['GET'])
+def get_appointments():
+    date_filter = request.args.get('date')
+    doctor_filter = request.args.get('doctor_id')
+    
+    # Default to today if no date provided
+    if not date_filter:
+        date_filter = datetime.date.today().isoformat()
+        
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT a.id, a.token_number, a.appointment_time, a.status, a.type,
+    
+    query = """
+        SELECT a.id, a.token_number, a.appointment_time, a.status, a.type, a.appointment_date,
                p.full_name as patient_name,
                d.full_name as doctor_name, d.specialization, dept.name as dept_name
         FROM appointments a
@@ -78,12 +85,23 @@ def get_todays_appointments():
         JOIN doctors d ON a.doctor_id = d.id
         JOIN departments dept ON d.department_id = dept.id
         WHERE a.appointment_date = %s
-        ORDER BY a.appointment_time ASC
-    """, (today,))
+    """
+    params = [date_filter]
+    
+    if doctor_filter:
+        query += " AND a.doctor_id = %s"
+        params.append(doctor_filter)
+        
+    query += " ORDER BY a.appointment_time ASC"
+    
+    cursor.execute(query, tuple(params))
     appts = cursor.fetchall()
-    # Convert times to string
+    
+    # Convert times/dates to string
     for a in appts:
         a['appointment_time'] = str(a['appointment_time'])
+        a['appointment_date'] = str(a['appointment_date'])
+        
     conn.close()
     return jsonify(appts)
 

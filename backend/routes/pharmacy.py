@@ -351,3 +351,58 @@ def checkout():
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
+@pharmacy_bp.route('/dashboard-stats', methods=['GET'])
+def get_dashboard_stats():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # 1. Total Medicines & Low Stock
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN stock_quantity < 10 THEN 1 ELSE 0 END) as low_stock
+            FROM medicines
+        """)
+        inventory_stats = cursor.fetchone()
+
+        # 2. Top Selling Medicines (Top 5 by quantity sold)
+        cursor.execute("""
+            SELECT m.name, SUM(oi.quantity) as sold
+            FROM order_items oi
+            JOIN medicines m ON oi.medicine_id = m.id
+            GROUP BY m.name
+            ORDER BY sold DESC
+            LIMIT 5
+        """)
+        top_selling = cursor.fetchall()
+        
+        # 3. Revenue Stats (Today vs Total)
+        cursor.execute("""
+            SELECT 
+                COALESCE(SUM(CASE WHEN created_at::date = CURRENT_DATE THEN total_amount ELSE 0 END), 0) as today_revenue,
+                COALESCE(SUM(total_amount), 0) as total_revenue
+            FROM orders
+            WHERE status = 'completed'
+        """)
+        revenue_stats = cursor.fetchone()
+
+        # 4. Recent Orders (Last 5)
+        cursor.execute("""
+            SELECT o.id, u.email, o.total_amount, o.status, o.created_at
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            ORDER BY o.created_at DESC
+            LIMIT 5
+        """)
+        recent_transactions = cursor.fetchall()
+
+        return jsonify({
+            'inventory': inventory_stats,
+            'top_selling': top_selling,
+            'revenue': revenue_stats,
+            'recent_transactions': recent_transactions
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()

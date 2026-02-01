@@ -311,25 +311,57 @@
 
         <!-- Appointments Section -->
         <div id="appointmentsSection" class="hidden animate-fade-in max-w-6xl mx-auto">
-            <header class="mb-4">
-                <h2 class="text-3xl font-bold text-white mb-1">Appointment Schedule</h2>
-                <p class="text-gray-400">Monitor today's patient visits.</p>
+            <header class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Appointment Schedule</h2>
+                    <p class="text-gray-400">Monitor patient visits and schedules.</p>
+                </div>
+
+                <!-- Filters -->
+                <div
+                    class="flex flex-col sm:flex-row gap-3 bg-gray-800/40 p-2 rounded-xl border border-gray-700/50 backdrop-blur-sm">
+                    <div class="relative">
+                        <input type="date" id="apptDateFilter" onchange="loadAppointments()"
+                            class="bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500 w-full sm:w-auto [color-scheme:dark]">
+                    </div>
+                    <div class="relative">
+                        <select id="apptDocFilter" onchange="loadAppointments()"
+                            class="bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500 w-full sm:w-auto appearance-none cursor-pointer pr-8">
+                            <option value="">All Doctors</option>
+                            <!-- Populated by JS -->
+                        </select>
+                        <svg class="w-4 h-4 text-gray-500 absolute right-3 top-2.5 pointer-events-none" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
             </header>
 
             <div
                 class="bg-gray-800/40 border border-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl">
                 <div class="px-6 py-5 border-b border-gray-700/50 flex justify-between items-center bg-gray-800/50">
-                    <h3 class="text-lg font-bold text-white">Today's Appointments</h3>
-                    <span
-                        class="text-xs bg-blue-500/10 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                        Live View
-                    </span>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        Appointments List
+                        <span id="apptCountBadge"
+                            class="bg-gray-700 text-gray-300 text-xs px-2 py-0.5 rounded-full">0</span>
+                    </h3>
+                    <button onclick="loadAppointments()"
+                        class="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                        Refresh
+                    </button>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto min-h-[300px]">
                     <table class="min-w-full text-left border-collapse">
                         <thead class="bg-gray-900/50 text-gray-400 uppercase text-xs font-semibold">
                             <tr>
+                                <th class="px-6 py-4 border-b border-gray-700/50">Date</th>
                                 <th class="px-6 py-4 border-b border-gray-700/50">Token</th>
                                 <th class="px-6 py-4 border-b border-gray-700/50">Time</th>
                                 <th class="px-6 py-4 border-b border-gray-700/50">Patient</th>
@@ -413,9 +445,15 @@
         async function init() {
             const res = await api.get('/auth/me');
             window.adminUser = res.user;
+
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('apptDateFilter').value = today;
+
             loadStats();
             setInterval(loadStats, 5000);
             loadDeptsForForm();
+            loadDoctorsForFilter();
         }
 
         function switchTab(tab) {
@@ -434,7 +472,7 @@
             // Load Data
             if (tab === 'doctors') loadDoctorsList();
             if (tab === 'patients') loadPatientsList();
-            if (tab === 'appointments') loadTodaysAppointments();
+            if (tab === 'appointments') loadAppointments();
         }
 
         async function loadStats() {
@@ -503,34 +541,61 @@
             `).join('');
         }
 
-        async function loadTodaysAppointments() {
-            const appts = await api.get('/admin/todays-appointments');
-            const tbody = document.getElementById('adminApptTable');
-            if (appts.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No appointments scheduled for today.</td></tr>';
-                return;
+        async function loadDoctorsForFilter() {
+            try {
+                const docs = await api.get('/admin/doctors');
+                const sel = document.getElementById('apptDocFilter');
+                if (sel) {
+                    sel.innerHTML = '<option value="">All Doctors</option>' +
+                        docs.map(d => `<option value="${d.id}">Dr. ${d.full_name}</option>`).join('');
+                }
+            } catch (e) { console.error('Failed to load doctors for filter', e); }
+        }
+
+        async function loadAppointments() {
+            const date = document.getElementById('apptDateFilter').value;
+            const docId = document.getElementById('apptDocFilter').value;
+
+            let url = `/admin/appointments?date=${date}`;
+            if (docId) url += `&doctor_id=${docId}`;
+
+            try {
+                const appts = await api.get(url);
+                const tbody = document.getElementById('adminApptTable');
+
+                // Update Count
+                document.getElementById('apptCountBadge').innerText = appts.length;
+
+                if (appts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-12 text-gray-500">No appointments found for the selected criteria.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = appts.map(a => `
+                    <tr class="hover:bg-gray-700/30 transition border-b border-gray-700/30 last:border-0">
+                        <td class="px-6 py-4 text-gray-400 font-mono text-xs">${new Date(a.appointment_date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4 text-blue-400 font-bold font-mono text-lg">#${a.token_number}</td>
+                        <td class="px-6 py-4 font-mono text-gray-300 font-medium">${a.appointment_time}</td>
+                        <td class="px-6 py-4 font-bold text-white">${a.patient_name}</td>
+                        <td class="px-6 py-4">
+                            <div class="text-white text-sm font-medium">Dr. ${a.doctor_name}</div>
+                            <div class="text-xs text-gray-500">${a.specialization}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-gray-800 border border-gray-700 ${a.type === 'emergency' ? 'text-red-400 border-red-500/50' : 'text-gray-400'}">
+                                ${a.type}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${a.status === 'completed' ? 'bg-green-500/20 text-green-400 ring-1 ring-green-500/50' : (a.status === 'cancelled' ? 'bg-red-500/20 text-red-400 ring-1 ring-red-500/50' : 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50')}">
+                                ${a.status}
+                            </span>
+                        </td>
+                    </tr >
+                    `).join('');
+            } catch (e) {
+                console.error("Failed to load appointments", e);
+                showToast("Failed to load appointments", 'error');
             }
-            tbody.innerHTML = appts.map(a => `
-                <tr class="hover:bg-gray-700/30 transition">
-                    <td class="px-6 py-4 text-blue-400 font-bold font-mono text-lg">#${a.token_number}</td>
-                    <td class="px-6 py-4 font-mono text-gray-300 font-medium">${a.appointment_time}</td>
-                    <td class="px-6 py-4 font-bold text-white">${a.patient_name}</td>
-                    <td class="px-6 py-4">
-                        <div class="text-white text-sm font-medium">Dr. ${a.doctor_name}</div>
-                        <div class="text-xs text-gray-500">${a.specialization}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-gray-800 border border-gray-700 ${a.type === 'emergency' ? 'text-red-400 border-red-500/50' : 'text-gray-400'}">
-                            ${a.type}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${a.status === 'completed' ? 'bg-green-500/20 text-green-400 ring-1 ring-green-500/50' : (a.status === 'cancelled' ? 'bg-red-500/20 text-red-400 ring-1 ring-red-500/50' : 'bg-yellow-500/20 text-yellow-400 ring-1 ring-yellow-500/50')}">
-                            ${a.status}
-                        </span>
-                    </td>
-                </tr >
-                `).join('');
         }
 
         async function loadDeptsForForm() {
