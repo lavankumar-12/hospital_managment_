@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Analytics Dashboard - Visual Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .chart-container-large {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border-right: 3px solid #3b82f6;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .glass-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col z-20 shadow-2xl">
+        <div class="p-6 border-b border-gray-700 flex items-center gap-3">
+            <div class="bg-purple-600/20 p-2 rounded-lg">
+                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+            </div>
+            <h1 class="font-bold text-lg tracking-wide text-gray-100">Analytics Hub</h1>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2 mt-2">
+            <a href="dashboard.html"
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                    </path>
+                </svg>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <button
+                class="nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition flex items-center gap-3 text-gray-400 active">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+                <span class="font-medium">Analytics</span>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-700 bg-gray-800">
+            <button onclick="logout()"
+                class="w-full flex items-center gap-2 text-red-400 hover:text-red-300 px-4 py-2 transition hover:bg-red-500/10 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span class="font-medium">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-8 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
+        <div class="max-w-7xl mx-auto space-y-8 animate-fade-in">
+
+            <!-- Header -->
+            <header class="mb-8">
+                <h1 class="text-4xl font-bold text-white mb-2">📊 Hospital Analytics Dashboard</h1>
+                <p class="text-gray-400 text-lg">Visual insights made simple - Understand your hospital's performance at
+                    a glance</p>
+            </header>
+
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500">
+                </div>
+                <p class="mt-4 text-gray-400">Loading analytics data...</p>
+            </div>
+
+            <!-- Analytics Content (Hidden initially) -->
+            <div id="analyticsContent" class="hidden space-y-8">
+
+                <!-- Summary KPI Cards -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="text-3xl">📈</span> Quick Summary
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400 uppercase tracking-wide">Total Doctors
+                                    </p>
+                                    <h3 class="text-4xl font-bold text-white mt-2" id="kpi-doctors">-</h3>
+                                </div>
+                                <div class="bg-blue-500/20 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400 uppercase tracking-wide">Total Patients
+                                    </p>
+                                    <h3 class="text-4xl font-bold text-white mt-2" id="kpi-patients">-</h3>
+                                </div>
+                                <div class="bg-teal-500/20 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400 uppercase tracking-wide">Total Revenue
+                                    </p>
+                                    <h3 class="text-4xl font-bold text-green-400 mt-2" id="kpi-revenue">₹0</h3>
+                                </div>
+                                <div class="bg-green-500/20 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-400 uppercase tracking-wide">Low Stock
+                                        Alerts</p>
+                                    <h3 class="text-4xl font-bold text-red-400 mt-2" id="kpi-lowstock">-</h3>
+                                </div>
+                                <div class="bg-red-500/20 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Appointment Insights -->
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">📅</span> Appointment Trends (Last 7 Days)
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">See how many appointments are booked each day</p>
+                        <div class="chart-container-large">
+                            <canvas id="appointmentTrendsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">✅</span> Appointment Status
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Current status of all appointments</p>
+                        <div class="chart-container-large">
+                            <canvas id="appointmentStatusChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Department & Patient Insights -->
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">🏥</span> Department Workload
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Which departments have the most appointments?</p>
+                        <div class="chart-container-large">
+                            <canvas id="departmentWorkloadChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">👥</span> Patient Demographics
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Gender distribution of registered patients</p>
+                        <div class="chart-container">
+                            <canvas id="patientGenderChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Patient Age & Appointment Type -->
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">🎂</span> Patient Age Groups
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Age distribution of your patients</p>
+                        <div class="chart-container-large">
+                            <canvas id="patientAgeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">🚑</span> Normal vs Emergency
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Type of appointments being booked</p>
+                        <div class="chart-container">
+                            <canvas id="appointmentTypeChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Revenue & Top Doctors -->
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">💰</span> Revenue Trends (Last 7 Days)
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Daily pharmacy sales revenue</p>
+                        <div class="chart-container-large">
+                            <canvas id="revenueTrendsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">⭐</span> Top 5 Doctors
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Doctors with the most appointments</p>
+                        <div class="chart-container-large">
+                            <canvas id="topDoctorsChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Low Stock Alert -->
+                <section>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span class="text-2xl">⚠️</span> Low Stock Medicines (Action Required!)
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-4">Medicines that need to be restocked soon</p>
+                        <div class="chart-container-large">
+                            <canvas id="lowStockChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-8 right-8 z-[250] space-y-4"></div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        checkAuth('admin');
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../login.html';
+        }
+
+        // Chart.js default configuration for dark theme
+        Chart.defaults.color = '#9CA3AF';
+        Chart.defaults.borderColor = 'rgba(75, 85, 99, 0.2)';
+
+        let charts = {};
+
+        async function loadAnalytics() {
+            try {
+                console.log('Starting to load analytics...');
+                console.log('API Base URL:', window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' && window.location.port !== '5001' ? 'http://127.0.0.1:5001/api' : '/api');
+                console.log('Token:', localStorage.getItem('token'));
+
+                // Load summary stats
+                console.log('Fetching summary statistics...');
+                const summary = await api.get('/analytics/summary');
+                console.log('Summary data received:', summary);
+
+                document.getElementById('kpi-doctors').textContent = summary.total_doctors;
+                document.getElementById('kpi-patients').textContent = summary.total_patients;
+                document.getElementById('kpi-revenue').textContent = '₹' + summary.total_revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+                document.getElementById('kpi-lowstock').textContent = summary.low_stock_count;
+
+                // Load detailed analytics
+                console.log('Fetching detailed analytics...');
+                const analytics = await api.get('/analytics/dashboard');
+                console.log('Analytics data received:', analytics);
+
+                // Create all charts
+                createAppointmentTrendsChart(analytics.appointment_trends);
+                createAppointmentStatusChart(analytics.appointment_status);
+                createDepartmentWorkloadChart(analytics.department_workload);
+                createPatientGenderChart(analytics.patient_gender);
+                createPatientAgeChart(analytics.patient_age_groups);
+                createAppointmentTypeChart(analytics.appointment_types);
+                createRevenueTrendsChart(analytics.revenue_trends);
+                createTopDoctorsChart(analytics.top_doctors);
+                createLowStockChart(analytics.low_stock_medicines);
+
+                // Hide loading, show content
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('analyticsContent').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                });
+
+                document.getElementById('loading').innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-red-400 mb-4">
+                            <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Failed to Load Analytics</h3>
+                        <p class="text-gray-400 mb-4">${error.message}</p>
+                        <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-medium transition">
+                            Retry
+                        </button>
+                    </div>
+                `;
+                showToast('Failed to load analytics: ' + error.message, 'error');
+            }
+        }
+
+        function createAppointmentTrendsChart(data) {
+            const ctx = document.getElementById('appointmentTrendsChart').getContext('2d');
+            charts.appointmentTrends = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Appointments',
+                        data: data.data,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12,
+                            titleColor: '#fff',
+                            bodyColor: '#fff'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(75, 85, 99, 0.2)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createAppointmentStatusChart(data) {
+            const ctx = document.getElementById('appointmentStatusChart').getContext('2d');
+            charts.appointmentStatus = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.data,
+                        backgroundColor: [
+                            'rgba(251, 191, 36, 0.8)',  // Pending - Yellow
+                            'rgba(34, 197, 94, 0.8)',   // Completed - Green
+                            'rgba(239, 68, 68, 0.8)',   // Cancelled - Red
+                            'rgba(168, 85, 247, 0.8)',  // Accepted - Purple
+                            'rgba(59, 130, 246, 0.8)',  // Other - Blue
+                            'rgba(236, 72, 153, 0.8)',  // Pink
+                            'rgba(20, 184, 166, 0.8)',  // Teal
+                            'rgba(249, 115, 22, 0.8)'   // Orange
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                color: '#9CA3AF',
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    }
+                }
+            });
+        }
+
+        function createDepartmentWorkloadChart(data) {
+            const ctx = document.getElementById('departmentWorkloadChart').getContext('2d');
+            charts.departmentWorkload = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Appointments',
+                        data: data.data,
+                        backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                        borderColor: 'rgb(168, 85, 247)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(75, 85, 99, 0.2)' }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPatientGenderChart(data) {
+            const ctx = document.getElementById('patientGenderChart').getContext('2d');
+            charts.patientGender = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.data,
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',   // Male - Blue
+                            'rgba(236, 72, 153, 0.8)',   // Female - Pink
+                            'rgba(168, 85, 247, 0.8)'    // Other - Purple
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                color: '#9CA3AF',
+                                font: { size: 13 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPatientAgeChart(data) {
+            const ctx = document.getElementById('patientAgeChart').getContext('2d');
+            charts.patientAge = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Patients',
+                        data: data.data,
+                        backgroundColor: [
+                            'rgba(251, 191, 36, 0.8)',  // Children - Yellow
+                            'rgba(34, 197, 94, 0.8)',   // Young Adults - Green
+                            'rgba(59, 130, 246, 0.8)',  // Adults - Blue
+                            'rgba(239, 68, 68, 0.8)'    // Seniors - Red
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(75, 85, 99, 0.2)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createAppointmentTypeChart(data) {
+            const ctx = document.getElementById('appointmentTypeChart').getContext('2d');
+            charts.appointmentType = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.data,
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',   // Normal - Green
+                            'rgba(239, 68, 68, 0.8)'    // Emergency - Red
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                color: '#9CA3AF',
+                                font: { size: 13 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    }
+                }
+            });
+        }
+
+        function createRevenueTrendsChart(data) {
+            const ctx = document.getElementById('revenueTrendsChart').getContext('2d');
+            charts.revenueTrends = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: data.data,
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12,
+                            callbacks: {
+                                label: (context) => '₹' + context.parsed.y.toLocaleString('en-IN')
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(75, 85, 99, 0.2)' },
+                            ticks: {
+                                callback: (value) => '₹' + value.toLocaleString('en-IN')
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTopDoctorsChart(data) {
+            const ctx = document.getElementById('topDoctorsChart').getContext('2d');
+            charts.topDoctors = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Appointments',
+                        data: data.data,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(75, 85, 99, 0.2)' }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createLowStockChart(data) {
+            const ctx = document.getElementById('lowStockChart').getContext('2d');
+            charts.lowStock = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Stock Quantity',
+                        data: data.data,
+                        backgroundColor: data.data.map(val => val < 20 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(251, 191, 36, 0.8)'),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: 'rgba(75, 85, 99, 0.2)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `transform translate-y-4 opacity-0 transition-all duration-300 bg-gray-900/90 backdrop-blur-md border border-white/10 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px] border-l-4 ${type === 'success' ? 'border-l-green-500' : type === 'error' ? 'border-l-red-500' : 'border-l-yellow-500'}`;
+
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span class="text-white font-medium">${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Initialize on page load
+        loadAnalytics();
+    </script>
+
+</body>
+
+</html>

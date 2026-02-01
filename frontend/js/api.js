@@ -11,8 +11,22 @@ const api = {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const res = await fetch(`${BASE_URL}${endpoint}`, { headers });
-        return res.json();
+        try {
+            const url = `${BASE_URL}${endpoint}`;
+            console.log('[API GET]', url);
+            const res = await fetch(url, { headers });
+            console.log('[API Response]', res.status, res.statusText);
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`HTTP ${res.status}: ${errorText || res.statusText}`);
+            }
+
+            return res.json();
+        } catch (error) {
+            console.error('[API Error]', endpoint, error);
+            throw error;
+        }
     },
 
     async post(endpoint, body) {

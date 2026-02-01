@@ -9,6 +9,7 @@ from routes.patient import patient_bp
 from routes.doctor import doctor_bp
 from routes.admin import admin_bp
 from routes.pharmacy import pharmacy_bp
+from routes.analytics import analytics_bp
 from config import Config
 
 from flask.json.provider import DefaultJSONProvider
@@ -39,6 +40,7 @@ app.register_blueprint(patient_bp, url_prefix='/api/patient')
 app.register_blueprint(doctor_bp, url_prefix='/api/doctor')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(pharmacy_bp, url_prefix='/api/pharmacy')
+app.register_blueprint(analytics_bp, url_prefix='/api/analytics')
 
 @app.route('/')
 def home():
