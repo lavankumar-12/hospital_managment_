@@ -4,128 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Management System</title>
+    <title>SUNRISE HOSPITAL - Advanced Healthcare System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-    </style>
-</head>
 
-<body
-    class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center relative overflow-y-auto py-10">
+        h1,
+        h2,
+        h3 {
+            font-family: 'Poppins', sans-serif;
+        }
 
-    <!-- Background Elements -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div
-            class="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -top-10 -left-10 animate-blob">
-        </div>
-        <div
-            class="absolute w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 top-10 right-10 animate-blob animation-delay-2000">
-        </div>
-        <div
-            class="absolute w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -bottom-20 left-20 animate-blob animation-delay-4000">
-        </div>
-    </div>
-
-    <div class="z-10 text-center mb-12 relative">
-        <h1
-            class="text-5xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-            SUNRISE-HOSPITAL</h1>
-        <p class="text-xl text-gray-300">Hospital Appointment & Real-Time Queue Management</p>
-    </div>
-
-    <div class="z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl px-4 mb-10">
-
-        <!-- Patient Card -->
-        <a href="login.html?role=patient"
-            class="group bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700 hover:border-blue-500 transition duration-300 transform hover:-translate-y-2 cursor-pointer text-center">
-            <div
-                class="w-16 h-16 mx-auto mb-6 bg-blue-500/20 rounded-full flex items-center justify-center group-hover:bg-blue-500 transition">
-                <svg class="w-8 h-8 text-blue-400 group-hover:text-white" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Patient</h2>
-            <p class="text-gray-400 text-sm">Book appointments, view history & download prescriptions.</p>
-        </a>
-
-        <!-- Doctor Card -->
-        <a href="login.html?role=doctor"
-            class="group bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700 hover:border-teal-500 transition duration-300 transform hover:-translate-y-2 cursor-pointer text-center">
-            <div
-                class="w-16 h-16 mx-auto mb-6 bg-teal-500/20 rounded-full flex items-center justify-center group-hover:bg-teal-500 transition">
-                <svg class="w-8 h-8 text-teal-400 group-hover:text-white" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
-                    </path>
-                </svg>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Doctor</h2>
-            <p class="text-gray-400 text-sm">Manage appointments, queues & treat patients.</p>
-        </a>
-
-        <!-- Admin Login Card -->
-        <a href="login.html?role=admin"
-            class="group bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700 hover:border-purple-500 transition duration-300 transform hover:-translate-y-2 cursor-pointer text-center">
-            <div
-                class="w-16 h-16 mx-auto mb-6 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-purple-500 transition">
-                <svg class="w-8 h-8 text-purple-400 group-hover:text-white" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4">
-                    </path>
-                </svg>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Admin Portal</h2>
-            <p class="text-gray-400 text-sm">Manage Hospital, Staff & System Settings.</p>
-        </a>
-
-        <!-- Pharmacist Login Card -->
-        <a href="login.html?role=pharmacist"
-            class="group bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700 hover:border-yellow-500 transition duration-300 transform hover:-translate-y-2 cursor-pointer text-center">
-            <div
-                class="w-16 h-16 mx-auto mb-6 bg-yellow-500/20 rounded-full flex items-center justify-center group-hover:bg-yellow-500 transition">
-                <svg class="w-8 h-8 text-yellow-400 group-hover:text-white" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                    </path>
-                </svg>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Pharmacist</h2>
-            <p class="text-gray-400 text-sm">Manage Medicine Stock & Orders.</p>
-        </a>
-
-    </div>
-
-    <!-- Animation Keyframes -->
-    <style>
+        /* Enhanced Blob Animation */
         @keyframes blob {
-            0% {
-                transform: translate(0px, 0px) scale(1);
-            }
 
-            33% {
-                transform: translate(30px, -50px) scale(1.1);
-            }
-
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-
+            0%,
             100% {
-                transform: translate(0px, 0px) scale(1);
+                transform: translate(0px, 0px) scale(1) rotate(0deg);
+                opacity: 0.3;
+            }
+
+            25% {
+                transform: translate(50px, -70px) scale(1.2) rotate(90deg);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: translate(-30px, 40px) scale(0.9) rotate(180deg);
+                opacity: 0.25;
+            }
+
+            75% {
+                transform: translate(70px, 30px) scale(1.1) rotate(270deg);
+                opacity: 0.35;
             }
         }
 
         .animate-blob {
-            animation: blob 7s infinite;
+            animation: blob 10s infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .animation-delay-2000 {
@@ -135,7 +56,395 @@
         .animation-delay-4000 {
             animation-delay: 4s;
         }
+
+        .animation-delay-6000 {
+            animation-delay: 6s;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Pulse glow animation */
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+            }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Gradient text animation */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .gradient-animate {
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+        }
+
+        /* Ripple effect */
+        @keyframes ripple {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2.4);
+                opacity: 0;
+            }
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+            transform: translate(-50%, -50%) scale(0.8);
+            animation: ripple 2s ease-out infinite;
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #2563eb, #7c3aed);
+        }
     </style>
+</head>
+
+<body
+    class="bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950 text-white min-h-screen flex flex-col items-center justify-center relative overflow-y-auto py-10">
+
+    <!-- Enhanced Background Elements with More Blobs -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div
+            class="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob -top-10 -left-10">
+        </div>
+        <div
+            class="absolute w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000 top-10 right-10">
+        </div>
+        <div
+            class="absolute w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000 -bottom-20 left-20">
+        </div>
+        <div
+            class="absolute w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-6000 bottom-40 right-40">
+        </div>
+    </div>
+
+    <!-- Floating particles -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute w-2 h-2 bg-blue-400 rounded-full opacity-60 top-20 left-1/4 float"
+            style="animation-delay: 0s;"></div>
+        <div class="absolute w-3 h-3 bg-purple-400 rounded-full opacity-50 top-40 right-1/3 float"
+            style="animation-delay: 1s;"></div>
+        <div class="absolute w-2 h-2 bg-teal-400 rounded-full opacity-70 bottom-32 left-1/3 float"
+            style="animation-delay: 0.5s;"></div>
+        <div class="absolute w-3 h-3 bg-pink-400 rounded-full opacity-60 bottom-20 right-1/4 float"
+            style="animation-delay: 1.5s;"></div>
+    </div>
+
+    <!-- Header Section with Enhanced Animation -->
+    <div class="z-10 text-center mb-16 relative fade-in-up">
+        <div class="relative inline-block">
+            <div
+                class="absolute inset-0 blur-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500 opacity-30 rounded-full">
+            </div>
+            <h1
+                class="relative text-7xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 gradient-animate drop-shadow-2xl">
+                SUNRISE HOSPITAL
+            </h1>
+        </div>
+        <p class="text-2xl text-gray-300 mt-6 font-light tracking-wide">Advanced Hospital Appointment & Real-Time Queue
+            Management</p>
+        <div class="mt-6 flex items-center justify-center gap-3">
+            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
+            <span class="text-green-400 text-sm font-semibold">System Online • 24/7 Available</span>
+        </div>
+    </div>
+
+    <!-- Enhanced Role Cards Grid -->
+    <div class="z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl px-4 mb-10">
+
+        <!-- Patient Card -->
+        <a href="login.html?role=patient" class="group relative card-hover">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500">
+            </div>
+            <div
+                class="relative bg-gray-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700 hover:border-blue-500 transition duration-500 cursor-pointer text-center overflow-hidden">
+                <!-- Decorative corner accent -->
+                <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full"></div>
+
+                <div
+                    class="relative w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500/30 to-blue-700/30 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg ripple">
+                    <svg class="w-10 h-10 text-blue-400 group-hover:text-white transition-colors duration-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+
+                <h2 class="text-3xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors duration-300">
+                    Patient</h2>
+                <p class="text-gray-400 text-sm leading-relaxed mb-4">Book appointments, view medical history & download
+                    prescriptions securely.</p>
+
+                <div
+                    class="mt-6 flex items-center justify-center gap-2 text-blue-400 group-hover:gap-4 transition-all duration-300">
+                    <span class="text-sm font-semibold">Access Portal</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </a>
+
+        <!-- Doctor Card -->
+        <a href="login.html?role=doctor" class="group relative card-hover">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-teal-600 to-teal-800 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500">
+            </div>
+            <div
+                class="relative bg-gray-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700 hover:border-teal-500 transition duration-500 cursor-pointer text-center overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-teal-500/10 rounded-bl-full"></div>
+
+                <div
+                    class="relative w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-500/30 to-teal-700/30 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg ripple">
+                    <svg class="w-10 h-10 text-teal-400 group-hover:text-white transition-colors duration-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                        </path>
+                    </svg>
+                </div>
+
+                <h2 class="text-3xl font-bold mb-3 text-white group-hover:text-teal-400 transition-colors duration-300">
+                    Doctor</h2>
+                <p class="text-gray-400 text-sm leading-relaxed mb-4">Manage appointments, patient queues & provide
+                    expert medical care.</p>
+
+                <div
+                    class="mt-6 flex items-center justify-center gap-2 text-teal-400 group-hover:gap-4 transition-all duration-300">
+                    <span class="text-sm font-semibold">Access Portal</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </a>
+
+        <!-- Admin Card -->
+        <a href="login.html?role=admin" class="group relative card-hover">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-800 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500">
+            </div>
+            <div
+                class="relative bg-gray-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700 hover:border-purple-500 transition duration-500 cursor-pointer text-center overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-purple-500/10 rounded-bl-full"></div>
+
+                <div
+                    class="relative w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple-500/30 to-purple-700/30 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg ripple">
+                    <svg class="w-10 h-10 text-purple-400 group-hover:text-white transition-colors duration-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4">
+                        </path>
+                    </svg>
+                </div>
+
+                <h2
+                    class="text-3xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors duration-300">
+                    Admin Portal</h2>
+                <p class="text-gray-400 text-sm leading-relaxed mb-4">Comprehensive hospital, staff & system settings
+                    management.</p>
+
+                <div
+                    class="mt-6 flex items-center justify-center gap-2 text-purple-400 group-hover:gap-4 transition-all duration-300">
+                    <span class="text-sm font-semibold">Access Portal</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </a>
+
+        <!-- Pharmacist Card -->
+        <a href="login.html?role=pharmacist" class="group relative card-hover">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500">
+            </div>
+            <div
+                class="relative bg-gray-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700 hover:border-yellow-500 transition duration-500 cursor-pointer text-center overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-bl-full"></div>
+
+                <div
+                    class="relative w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-yellow-500/30 to-orange-600/30 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg ripple">
+                    <svg class="w-10 h-10 text-yellow-400 group-hover:text-white transition-colors duration-300"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                </div>
+
+                <h2
+                    class="text-3xl font-bold mb-3 text-white group-hover:text-yellow-400 transition-colors duration-300">
+                    Pharmacist</h2>
+                <p class="text-gray-400 text-sm leading-relaxed mb-4">Manage medicine inventory, stock levels &
+                    prescription orders.</p>
+
+                <div
+                    class="mt-6 flex items-center justify-center gap-2 text-yellow-400 group-hover:gap-4 transition-all duration-300">
+                    <span class="text-sm font-semibold">Access Portal</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- Features Section -->
+    <div class="z-10 w-full max-w-7xl px-4 mt-16 mb-10 fade-in-up" style="animation-delay: 0.3s;">
+        <h2
+            class="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+            Why Choose SUNRISE HOSPITAL?
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div
+                class="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">Real-Time Queue</h3>
+                <p class="text-gray-400 text-sm">Live appointment tracking and queue management for seamless patient
+                    flow.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div
+                class="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">Secure & Private</h3>
+                <p class="text-gray-400 text-sm">Advanced encryption ensures your medical data remains confidential and
+                    secure.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div
+                class="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10 hover:border-teal-500/50 transition-all duration-300 hover:transform hover:scale-105">
+                <div class="w-14 h-14 bg-teal-500/20 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">24/7 Availability</h3>
+                <p class="text-gray-400 text-sm">Book appointments and access services anytime, anywhere with our
+                    platform.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="z-10 w-full max-w-7xl px-4 py-8 mt-auto border-t border-white/10">
+        <div class="text-center text-gray-400 text-sm">
+            <p>&copy; 2026 SUNRISE HOSPITAL. All rights reserved.</p>
+            <p class="mt-2">Advanced Hospital Management System • Powered by Innovation</p>
+        </div>
+    </footer>
+
 </body>
 
 </html>

@@ -4,128 +4,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Appointment System</title>
+    <title>Sign In - SUNRISE HOSPITAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap"
+        rel="stylesheet">
     <style>
         body {
-
             font-family: 'Inter', sans-serif;
         }
 
-        #one {
-            font-size: 40px;
-            margin-left: 20px;
-            margin-top: 20px;
+        h1,
+        h2 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Solid dark blue background */
+        .dark-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6d 50%, #1e3a5f 100%);
+        }
+
+        /* Large glowing orbs */
+        @keyframes floatOrb {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(20px, -20px) scale(1.05);
+            }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: floatOrb 6s ease-in-out infinite;
+        }
+
+        .orb-blue-top {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(100, 200, 255, 0.6) 0%, rgba(100, 200, 255, 0) 70%);
+            top: -100px;
+            right: 50%;
+            animation-delay: 0s;
+        }
+
+        .orb-blue-bottom {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(80, 180, 255, 0.5) 0%, rgba(80, 180, 255, 0) 70%);
+            bottom: -150px;
+            left: -100px;
+            animation-delay: 2s;
+        }
+
+        .orb-pink-left {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(200, 100, 255, 0.5) 0%, rgba(200, 100, 255, 0) 70%);
+            top: 30%;
+            left: -100px;
+            animation-delay: 1s;
+        }
+
+        .orb-purple-right {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(180, 120, 255, 0.55) 0%, rgba(180, 120, 255, 0) 70%);
+            top: 20%;
+            right: -120px;
+            animation-delay: 3s;
+        }
+
+        /* Glassmorphic card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Input styling */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(100, 200, 255, 0.5);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(100, 200, 255, 0.15);
+        }
+
+        /* Button styling */
+        .glass-button {
+            background: linear-gradient(135deg, rgba(70, 130, 200, 0.8), rgba(100, 150, 220, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .glass-button:hover {
+            background: linear-gradient(135deg, rgba(80, 140, 210, 0.9), rgba(110, 160, 230, 0.9));
+            box-shadow: 0 8px 24px rgba(100, 150, 220, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .glass-button:active {
+            transform: translateY(0);
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* Link styling */
+        .glass-link {
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
+        }
+
+        .glass-link:hover {
+            color: rgba(255, 255, 255, 1);
         }
     </style>
 </head>
 
-<body class="bg-gray-900 text-white h-screen flex flex-col items-center justify-center">
+<body class="dark-bg text-white min-h-screen flex items-center justify-center relative overflow-hidden">
 
-    <div class="absolute top-0 w-full p-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold tracking-wider text-blue-400" id="one">SUNRISE</h1>
-        <a href="index.html" class="flex items-center gap-2 text-gray-400 hover:text-white transition font-medium">
+    <!-- Glowing Orbs Background -->
+    <div class="orb orb-blue-top"></div>
+    <div class="orb orb-blue-bottom"></div>
+    <div class="orb orb-pink-left"></div>
+    <div class="orb orb-purple-right"></div>
+
+    <!-- Header with Hospital Name -->
+    <div class="absolute top-0 w-full p-6 flex justify-between items-center z-10 fade-in">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                    </path>
+                </svg>
+            </div>
+            <h1 class="text-xl font-bold tracking-wider text-white">
+                SUNRISE HOSPITAL
+            </h1>
+        </div>
+        <a href="index.html"
+            class="flex items-center gap-2 text-white/70 hover:text-white transition-all duration-300 font-medium hover:gap-3">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
                 </path>
             </svg>
-            Back
+            Back to Home
         </a>
     </div>
 
-    <div class="w-full max-w-md bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
-        <h2
-            class="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-            Welcome Back</h2>
+    <!-- Login Card -->
+    <div class="z-10 w-full max-w-md px-4 fade-in" style="animation-delay: 0.2s;">
+        <div class="glass-card p-12 rounded-3xl">
+            <!-- Title -->
+            <h2 id="pageTitle" class="text-4xl font-bold text-center mb-10 text-white">
+                Sign In
+            </h2>
 
-        <div id="loginForm">
-            <div class="mb-4">
-                <label class="block text-gray-400 text-sm mb-2">Email Address</label>
-                <input type="email" id="email"
-                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 text-white"
-                    placeholder="you@example.com">
-            </div>
-            <div class="mb-6">
-                <label class="block text-gray-400 text-sm mb-2">Password</label>
+            <form id="loginForm" class="space-y-6">
+                <!-- Email Field -->
+                <div>
+                    <input type="email" id="email" class="glass-input w-full px-5 py-4 rounded-xl text-base"
+                        placeholder="Email" autocomplete="email" required>
+                </div>
+
+                <!-- Password Field -->
                 <div class="relative">
-                    <input type="password" id="password"
-                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 text-white pr-10"
-                        placeholder="••••••••">
+                    <input type="password" id="password" class="glass-input w-full px-5 py-4 rounded-xl text-base pr-12"
+                        placeholder="Password" autocomplete="current-password" required>
                     <button type="button" onclick="togglePassword()"
-                        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white focus:outline-none">
-                        <!-- Eye Icon (Show) -->
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
                         <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
                         </svg>
-                        <!-- Eye Off Icon (Hide) -->
                         <svg id="eyeOffIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21">
+                            </path>
                         </svg>
                     </button>
                 </div>
-            </div>
-            <button onclick="login()"
-                class="w-full bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-bold py-3 rounded-lg transition duration-300 transform hover:scale-105">
-                Sign In
-            </button>
-            <div class="mt-4 text-center">
-                <p class="text-gray-400 text-sm">Don't have an account? <a href="register.html"
-                        class="text-blue-400 hover:text-blue-300">Register as Patient</a></p>
-            </div>
+
+                <!-- Forgot Password Link -->
+                <div class="text-center">
+                    <a href="#" class="glass-link text-sm">Forgot password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="button" onclick="login()"
+                    class="glass-button w-full py-4 rounded-xl font-semibold text-white text-base">
+                    Login
+                </button>
+
+                <!-- Sign Up Link (Only for Patient) -->
+                <div id="signupLink" class="text-center mt-6">
+                    <p class="text-white/70 text-sm">
+                        Don't have an account?
+                        <a href="register.html" class="glass-link font-semibold">Sign up</a>
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 hidden bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg">
-        Error message here
+    <div id="toast"
+        class="fixed bottom-8 right-8 hidden px-6 py-4 rounded-xl shadow-2xl backdrop-blur-lg border transform transition-all duration-300 translate-y-2 opacity-0 z-50">
+        Message
     </div>
 
     <script src="js/api.js?v=1.6"></script>
     <script>
-        // Set UI based on Role
+        // Get role from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const role = urlParams.get('role'); // patient, doctor, admin
+        const role = urlParams.get('role');
 
         const titles = {
-            'patient': 'Patient Login',
+            'patient': 'Patient Portal',
             'doctor': 'Doctor Portal',
             'admin': 'Admin Console',
             'pharmacist': 'Pharmacy Portal'
         };
 
+        // Update title based on role
         if (role && titles[role]) {
-            document.querySelector('h2').innerText = titles[role];
+            document.getElementById('pageTitle').innerText = titles[role];
         }
 
-        // Hide register link if not patient
+        // Hide signup link for non-patient roles
         if (role && role !== 'patient') {
-            document.querySelector('.text-center.mt-4').style.display = 'none';
+            document.getElementById('signupLink').style.display = 'none';
         }
 
         async function login() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
+            }
+
             try {
                 const res = await api.post('/auth/login', { email, password });
                 if (res.token) {
-                    // Check if role matches what they selected (optional security/UX check)
-                    // If they logged in as doctor but are on Admin page, maybe warn?
-                    // For now, just rely on the token role for redirect.
                     localStorage.setItem('token', res.token);
                     localStorage.setItem('role', res.role);
                     localStorage.setItem('user_id', res.user_id);
 
-                    if (res.role === 'patient') window.location.href = 'patient/dashboard.html';
-                    else if (res.role === 'doctor') window.location.href = 'doctor/dashboard.html';
-                    else if (res.role === 'admin') window.location.href = 'admin/dashboard.html';
-                    else if (res.role === 'pharmacist') window.location.href = 'pharmacist/dashboard.html';
+                    showToast('Login successful! Redirecting...', 'success');
+
+                    setTimeout(() => {
+                        if (res.role === 'patient') window.location.href = 'patient/dashboard.html';
+                        else if (res.role === 'doctor') window.location.href = 'doctor/dashboard.html';
+                        else if (res.role === 'admin') window.location.href = 'admin/dashboard.html';
+                        else if (res.role === 'pharmacist') window.location.href = 'pharmacist/dashboard.html';
+                    }, 800);
                 } else {
                     showToast(res.message || 'Login failed', 'error');
                 }
@@ -137,10 +311,18 @@
         function showToast(msg, type) {
             const t = document.getElementById('toast');
             t.innerText = msg;
-            t.classList.remove('hidden');
-            if (type === 'error') t.className = "fixed bottom-5 right-5 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg";
-            else t.className = "fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg";
-            setTimeout(() => t.classList.add('hidden'), 3000);
+            t.classList.remove('hidden', 'translate-y-2', 'opacity-0');
+
+            if (type === 'error') {
+                t.className = "fixed bottom-8 right-8 bg-red-500/90 border-red-400 text-white px-6 py-4 rounded-xl shadow-2xl backdrop-blur-lg border transform transition-all duration-300 z-50";
+            } else {
+                t.className = "fixed bottom-8 right-8 bg-green-500/90 border-green-400 text-white px-6 py-4 rounded-xl shadow-2xl backdrop-blur-lg border transform transition-all duration-300 z-50";
+            }
+
+            setTimeout(() => {
+                t.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => t.classList.add('hidden'), 300);
+            }, 3000);
         }
 
         function togglePassword() {
@@ -158,6 +340,14 @@
                 eyeOffIcon.classList.add('hidden');
             }
         }
+
+        // Enter key support
+        document.getElementById('email').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') login();
+        });
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') login();
+        });
     </script>
 </body>
 
